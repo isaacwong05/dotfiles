@@ -20,21 +20,46 @@
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-  };
 
-  outputs = { self, nixpkgs, helium-browser, quickshell, noctalia, whisper-dictation, home-manager, ... }: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit helium-browser noctalia quickshell whisper-dictation; };
-      modules = [
-        ./configuration.nix
-        home-manager.nixosModules.home-manager
-        {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.isaac = import ./home.nix;
-        }
-      ];
+    anifetch = {
+      url = "github:Notenlish/anifetch";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
+
+  outputs =
+    {
+      self,
+      nixpkgs,
+      helium-browser,
+      quickshell,
+      noctalia,
+      whisper-dictation,
+      home-manager,
+      anifetch,
+      ...
+    }:
+    {
+      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit
+            helium-browser
+            noctalia
+            quickshell
+            anifetch
+            whisper-dictation
+            ;
+        };
+        modules = [
+          ./configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.isaac = import ./home.nix;
+          }
+        ];
+      };
+    };
 }

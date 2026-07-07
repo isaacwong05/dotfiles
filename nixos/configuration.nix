@@ -1,6 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running 'nixos-help').
 {
   config,
   pkgs,
@@ -9,11 +6,11 @@
   noctalia,
   quickshell,
   whisper-dictation,
+  anifetch,
   ...
 }:
 {
   imports = [
-    # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
 
@@ -61,23 +58,14 @@
   nixpkgs.config.permittedInsecurePackages = [
     "electron-39.8.10"
   ];
-  # lets bun/npm-installed prebuilt binaries (esbuild, native addons, etc.) run
   programs.nix-ld.enable = true;
-  # nix-index: command-not-found suggestions + `nix-locate` file search
   programs.nix-index.enable = true;
 
   # ── networking ─────────────────────────────────────────────────────────────
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # networking.firewall.enable = false;
 
-  # ── audio (pipewire) ─────────────────────────────────────────────────────
-  # required for spotify-player, whisper-dictation mic input, notification sounds, Beeper calls, etc.
+  # ── audio ──────────────────────────────────────────────────────────────────
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -87,27 +75,25 @@
     wireplumber.enable = true;
   };
 
-  # ── graphics ─────────────────────────────────────────────────────────────
-  # required for OpenGL/Vulkan (niri, ghostty's GL renderer, browsers, etc.)
+  # ── graphics ───────────────────────────────────────────────────────────────
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
 
-  # ── fonts ────────────────────────────────────────────────────────────────
+  # ── fonts ──────────────────────────────────────────────────────────────────
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
     noto-fonts
-    noto-fonts-cjk-sans # Chinese/Japanese/Korean coverage (HK locale + Korean music)
+    noto-fonts-cjk-sans
     noto-fonts-cjk-serif
     noto-fonts-color-emoji
   ];
 
-  # ── gtk app support (nautilus, xdg-desktop-portal-gtk, dconf-backed settings) ──
+  # ── gtk / portals ──────────────────────────────────────────────────────────
   programs.dconf.enable = true;
-  services.gvfs.enable = true; # trash, network mounts, and file operations for nautilus
+  services.gvfs.enable = true;
 
-  # ── ydotool (used by whisper-dictation to simulate paste/typing) ──────────
   systemd.user.services.ydotool = {
     description = "ydotool daemon";
     wantedBy = [ "graphical-session.target" ];
@@ -117,7 +103,6 @@
     };
   };
 
-  # ── wireshark (needs module for capture permissions, not just the package) ──
   programs.wireshark.enable = true;
 
   # ── localization ───────────────────────────────────────────────────────────
@@ -148,12 +133,12 @@
       "wheel"
       "input"
       "wireshark"
-    ]; # input: whisper-dictation/ydotool; wireshark: packet capture
+    ];
     shell = pkgs.zsh;
     packages = with pkgs; [ ];
   };
 
-  # ── session environment ───────────────────────────────────────────────────
+  # ── session environment ────────────────────────────────────────────────────
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";
@@ -164,7 +149,7 @@
     VISUAL = "nvim";
   };
 
-  # ── desktop: niri + greetd + portals ──────────────────────────────────────
+  # ── desktop: niri + greetd + portals ───────────────────────────────────────
   programs.niri.enable = true;
   services.greetd = {
     enable = true;
@@ -191,16 +176,12 @@
       pkgs.xdg-desktop-portal-gtk
     ];
     config = {
-      niri = {
-        default = lib.mkForce "gtk";
-      };
-      common = {
-        default = lib.mkForce "gtk";
-      };
+      niri.default = lib.mkForce "gtk";
+      common.default = lib.mkForce "gtk";
     };
   };
 
-  # ── shell: zsh + starship + zoxide ────────────────────────────────────────
+  # ── shell ──────────────────────────────────────────────────────────────────
   programs.zsh = {
     enable = true;
     autosuggestions.enable = true;
@@ -213,7 +194,7 @@
     enableZshIntegration = true;
   };
 
-  # ── dictation ───────────────────────────────────────────────────────────────
+  # ── dictation ──────────────────────────────────────────────────────────────
   systemd.user.services.whisper-dictation = {
     enable = true;
     wantedBy = [ "graphical-session.target" ];
@@ -228,9 +209,10 @@
       init.defaultBranch = "main";
     };
   };
+
   # ── packages ───────────────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
-    # cli — core
+    # cli
     neovim
     git
     github-cli
@@ -245,8 +227,6 @@
     fzf
     bun
     nodejs
-
-    # cli — modern replacements / viewers
     bat
     eza
     dust
@@ -255,108 +235,76 @@
     tldr
     hexyl
     xxd
-
-    # archives
     unzip
     zip
     p7zip
     unrar
     xz
+    (callPackage ./packages/tuxedo.nix { })
 
-    # compilers / build
+    # dev
     gcc
     gnumake
     cmake
     gdb
     python3
-
-    # security / pentest
     nmap
 
     # nix tooling
-    nh # nicer rebuild wrapper (nh os switch)
-    nix-output-monitor # prettier build output (nh uses it)
-    nvd # diff generations — what changed each rebuild
-    nix-tree # visualise dependency trees
-    nixfmt # official Nix formatter
-    statix # Nix linter (antipatterns)
-    deadnix # find unused Nix code
-    nixd # Nix language server (for nvim)
-    nix-search-tv # fuzzy pkg/option finder
-    nix-init # generate Nix packages from URLs (handy for MacTahoe etc.)
-
-    # media
-    mpv
-    imv
-    zathura
-
-    # terminal + browser
-    ghostty
-    firefox
+    nh
+    nix-output-monitor
+    nvd
+    nix-tree
+    nixfmt
+    statix
+    deadnix
+    nixd
+    nix-search-tv
+    nix-init
 
     # gui apps
+    ghostty
+    firefox
     obsidian
     vicinae
     bitwarden-desktop
     beeper
     nautilus
 
-    # audio / media control
+    # media
+    mpv
+    imv
+    zathura
+    spotify-player
+    whisper-cpp
     pwvucontrol
     playerctl
     brightnessctl
-
-    # screen recording
     wf-recorder
 
-    # gtk theming
-    nwg-look
-    glib
-
-    # secrets / passwords
-    bitwarden-cli
-
-    # voice / transcription
-    spotify-player
-    whisper-cpp
-    ydotool
-
-    # screenshot / clipboard / notifications
+    # desktop utilities
     grim
     slurp
     wl-clipboard
     libnotify
-
-    # theming
+    nwg-look
+    glib
     bibata-cursors
     qt6Packages.qt6ct
-
-    # shell tooling
+    ydotool
+    bitwarden-cli
     zoxide
     zsh-vi-mode
     zsh-completions
 
-    # flake-based packages
+    # flakes
     helium-browser.packages.${pkgs.system}.default
     noctalia.packages.${pkgs.system}.default
     quickshell.packages.${pkgs.system}.default
     whisper-dictation.packages.${pkgs.system}.default
+    anifetch.packages.${pkgs.system}.default
   ];
 
-  # ── optional programs (uncomment as needed) ───────────────────────────────
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-  # services.openssh.enable = true;
-
-  # ── system state version ──────────────────────────────────────────────────
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It's perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "26.05"; # Did you read the comment?
+  # ── system state version ───────────────────────────────────────────────────
+  system.stateVersion = "26.05";
 }
