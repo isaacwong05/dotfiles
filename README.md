@@ -1,38 +1,35 @@
 # dotfiles
 
-Personal configuration files for my NixOS setup.
+my personal config for nixos.
 
-## Overview
+## overview
 
-A [niri](https://github.com/YaLTeR/niri) scrolling-tiling Wayland setup on NixOS, themed around a minimal monochrome aesthetic.
+a [niri](https://github.com/YaLTeR/niri) scrolling-tiling wayland setup on nixos, themed around a minimal monochrome look.
 
-## Contents
+## contents
 
-| Path       | Description                                       |
-| ---------- | ------------------------------------------------- |
-| `niri/`    | niri compositor config, keybinds, and scripts     |
-| `ghostty/` | Ghostty terminal configuration                    |
-| `nvim/`    | Neovim config (LazyVim-based)                     |
-| `.zshrc`   | Zsh shell configuration (zinit, starship, zoxide) |
+| path       | description                                              |
+| ---------- | -------------------------------------------------------- |
+| `nixos/`   | nixos system config (flake, configuration.nix, home.nix) |
+| `niri/`    | niri compositor config, keybinds, and scripts            |
+| `ghostty/` | ghostty terminal config                                  |
+| `nvim/`    | neovim config (lazyvim-based)                            |
+| `.zshrc`   | zsh config (zinit, starship, zoxide)                     |
 
-## Stack
+## stack
 
-- **OS:** NixOS (flake-based, with Home Manager)
-- **Compositor:** niri
-- **Shell (desktop):** Noctalia (Quickshell)
-- **Terminal:** Ghostty
-- **Editor:** Neovim / LazyVim
-- **Shell:** Zsh + Starship + zinit
-- **Bootloader:** Limine
-- **Login:** greetd + tuigreet
+- **os:** nixos (flake-based, with home-manager)
+- **compositor:** niri
+- **shell (desktop):** noctalia (quickshell)
+- **terminal:** ghostty
+- **editor:** neovim / lazyvim
+- **shell:** zsh + starship + zinit
+- **bootloader:** limine
+- **login:** greetd + tuigreet
 
-## Notes
+## usage
 
-The full system configuration (packages, services, hardware) lives in my NixOS flake, not this repo — these are the user-level config files that sit in `~/.config`.
-
-## Usage
-
-Clone and symlink (or copy) the relevant directories into `~/.config`:
+clone and copy the bits you want into `~/.config`:
 
 ```bash
 git clone git@github.com:isaacwong05/dotfiles.git
@@ -40,4 +37,10 @@ cp -r dotfiles/niri ~/.config/
 cp -r dotfiles/ghostty ~/.config/
 cp -r dotfiles/nvim ~/.config/
 cp dotfiles/.zshrc ~/
+```
+
+for the nixos config, point your rebuild at the flake:
+
+```bash
+sudo nixos-rebuild switch --flake ./dotfiles/nixos#nixos
 ```
