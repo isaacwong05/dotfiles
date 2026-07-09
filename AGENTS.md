@@ -68,42 +68,59 @@ Nix files are the source of truth too — edit the repo, then rebuild. Never edi
 
 ## Branch workflow
 
-Three long-lived branches, all currently at the same point:
+`main` is the only long-lived branch: the stable, always-works baseline.
+Everything else is a short-lived per-idea branch.
 
-| Branch | Use for |
-|--------|---------|
-| `main` | Stable, deployable state. Merge finished work here. |
-| `feature` | Adding new things: new plugins, packages, keybinds, scripts, flake inputs. |
-| `refactor` | Restructuring/optimizing existing configs without changing behavior (reformatting, splitting files, dedup, perf). |
+### Flow
+
+1. **Start something new** from `main`:
+   ```bash
+   git checkout main
+   git checkout -b feature/my-new-idea
+   ```
+   Name branches `feature/<short-description>` (for adding things) or
+   `refactor/<short-description>` (for restructuring without behavior change).
+2. **Work, break things, commit frequently** on that branch. Frequent messy commits
+   are fine — they'll be squashed away.
+3. **Validate before merging** — run the relevant check from "Validation commands"
+   above (`niri validate`, `zsh -n`, `nh os test`, etc.) until the branch works.
+4. **Squash-merge back to `main`** as one clean commit:
+   ```bash
+   git checkout main
+   git merge --squash feature/my-new-idea
+   git commit -m "add my new idea"
+   git branch -d feature/my-new-idea
+   ```
+5. The squashed commit message follows the **Git commit style** below — lowercase,
+   terse, comma/`+`-separated, no prefix.
 
 ### Rules
 
-- **Start every task on the right branch.** Ask (or decide) whether the work is a
-  feature or a refactor before editing. `git switch` to that branch first.
-- **Commit on the branch, not `main`.** Only merge into `main` once the work is
-  validated and the user is happy.
+- **Only `main` is long-lived.** Don't keep `feature`/`refactor` branches around
+  after the work is merged — delete them.
+- **Branch off `main`, never off another feature branch** unless explicitly stacking
+  dependent work.
 - **Switching branches changes the live system.** Because `~/.config/{nvim,niri,ghostty}`
-  and `~/.zshrc` are symlinks into this repo, `git switch feature` instantly changes
-  the running config. Useful for real-world testing, but a half-finished branch can
-  leave the shell/editor/compositor in a broken state. Warn the user before switching
-  if the branch has untested/broken work, and prefer testing risky changes on a
-  throwaway branch first.
-- **Validate before merging.** On the working branch, run the relevant check from
-  "Validation commands" above (`niri validate`, `zsh -n`, `nh os test`, etc.) before
-  merging into `main`.
-- **Don't delete the long-lived branches** (`main`, `feature`, `refactor`). Throwaway
-  test branches can be deleted after merging.
-- **Keep branches in sync with `main` before starting** new work: `git switch feature &&
-  git merge main` (or rebase) so you're not building on stale config.
+  and `~/.zshrc` are symlinks into this repo, `git checkout feature/...` instantly
+  changes the running config. Useful for real-world testing, but a half-finished
+  branch can leave the shell/editor/compositor in a broken state. Warn the user before
+  switching to untested work, and `git checkout main` to restore a known-good config.
+- **Validate before the squash merge** — never merge a broken branch into `main`.
+- **Don't force-push `main`** and don't rewrite shared history without confirmation.
 
-### Typical flow
+### Typical session
 
 ```bash
-git switch feature           # or: refactor
-# ... make edits, validate ...
+git checkout main
+git checkout -b feature/telescope-fzf   # start new idea
+# ... edit nvim/lua/plugins/telescope-fzf.lua, run nvim --headless "+Lazy! sync" +qa ...
+git commit -m "wip: telescope-fzf spec"    # messy, fine
+git commit -m "fix: opts path"            # messy, fine
+# ... validated and working ...
+git checkout main
+git merge --squash feature/telescope-fzf
 git commit -m "add telescope-fzf-native plugin"
-git switch main && git merge feature
-git switch feature && git merge main   # keep branch up to date
+git branch -d feature/telescope-fzf
 ```
 
 ## Git commit style
