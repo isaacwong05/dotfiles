@@ -1,14 +1,15 @@
 # ── aliases ────────────────────────────────────────────────────────────────
-alias rb='nh os switch /etc/nixos'
-alias nixedit='sudoedit /etc/nixos/configuration.nix'
-alias nixflake='sudoedit /etc/nixos/flake.nix'
+alias rb='nh os switch ~/git/dotfiles/nixos'
+alias nixedit='nvim ~/git/dotfiles/nixos/configuration.nix'
+alias nixflake='nvim ~/git/dotfiles/nixos/flake.nix'
 alias cl='clear'
 alias ls='eza --icons=always -a'
 alias l='ls'
 alias ff='fastfetch'
+alias af='anifetch ~/nixos-logo.mp4 -W 30 -H 15 -fr -ca "--symbols braille --colors 2 --fg-only" -c ~/.config/fastfetch/anifetch.jsonc'
 alias spf='superfile'
 alias spt='spotify_player'
-alias zconf='nvim .zshrc'
+alias zconf='nvim ~/.zshrc'
 alias wtf='tldr'
 
 # ── zinit bootstrap ────────────────────────────────────────────────────────
@@ -25,6 +26,12 @@ zinit light zsh-users/zsh-completions
 
 zinit ice wait lucid
 zinit light Aloxaf/fzf-tab
+
+zinit ice wait lucid
+zinit light zsh-users/zsh-history-substring-search
+
+zinit ice wait lucid
+zinit light hlissner/zsh-autopair
 
 # ── options ────────────────────────────────────────────────────────────────
 setopt NOMATCH
@@ -47,6 +54,19 @@ setopt AUTO_PUSHD
 export EDITOR=nvim
 export VISUAL=nvim
 
-# bun
+# ── bun ────────────────────────────────────────────────────────────────────
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# ── completion ─────────────────────────────────────────────────────────────
+zstyle :compinstall filename '/home/isaac/.zshrc'
+autoload -Uz compinit
+compinit -C
+
+# replay any compdef calls that turbo-loaded (wait lucid) plugins queued
+# before compinit was available — this is what your old mtime-check was
+# trying to approximate, but zinit's own mechanism is race-free.
+zinit cdreplay -q
+
+# ── prompt ─────────────────────────────────────────────────────────────────
+eval "$(starship init zsh)"

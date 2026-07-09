@@ -1,0 +1,10 @@
+# neovim / lazy.nvim runtime state (regenerated, not config)
+tt.*
+.tests
+doc/tags
+debug
+.repro
+foo.*
+*.log
+data
+.neoconf.json

@@ -29,18 +29,18 @@ a [niri](https://github.com/YaLTeR/niri) scrolling-tiling wayland setup on nixos
 
 ## usage
 
-clone and copy the bits you want into `~/.config`:
+clone and symlink the bits you want into `~/.config` (so edits in the repo go live automatically and can't drift):
 
 ```bash
-git clone git@github.com:isaacwong05/dotfiles.git
-cp -r dotfiles/niri ~/.config/
-cp -r dotfiles/ghostty ~/.config/
-cp -r dotfiles/nvim ~/.config/
-cp dotfiles/.zshrc ~/
+git clone git@github.com:isaacwong05/dotfiles.git ~/git/dotfiles
+ln -s ~/git/dotfiles/niri    ~/.config/niri
+ln -s ~/git/dotfiles/ghostty ~/.config/ghostty
+ln -s ~/git/dotfiles/nvim    ~/.config/nvim
+ln -s ~/git/dotfiles/.zshrc  ~/.zshrc
 ```
 
 for the nixos config, point your rebuild at the flake:
 
 ```bash
-sudo nixos-rebuild switch --flake ./dotfiles/nixos#nixos
+nh os switch ~/git/dotfiles/nixos   # or: sudo nixos-rebuild switch --flake ~/git/dotfiles/nixos#nixos
 ```

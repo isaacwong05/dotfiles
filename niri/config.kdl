@@ -187,7 +187,7 @@ binds {
     Mod+BackSpace { spawn "ghostty" "-e" "nvim" "/home/isaac/.config/niri/config.kdl"; }
     Mod+Q         { spawn "ghostty"; }
     Mod+A         { spawn "bash" "-c" "~/.config/niri/scripts/ai-panel.sh"; }
-    Mod+Backslash { spawn "ghostty" "-e" "dott-tui"; }
+    Mod+Backslash { spawn "ghostty" "-e" "sh" "-c" "tuxedo ~/Documents/Misc/todo.txt"; }
     Mod+E         { spawn "ghostty" "-e" "superfile"; }
     Mod+F         { spawn "helium" "--ozone-platform=wayland"; }
     Mod+O         { spawn "obsidian"; }
