@@ -1,34 +1,23 @@
-// ███╗   ██╗██╗██████╗ ██╗
-// ████╗  ██║██║██╔══██╗██║
-// ██╔██╗ ██║██║██████╔╝██║
-// ██║╚██╗██║██║██╔══██╗██║
-// ██║ ╚████║██║██║  ██║██║
-// ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝╚═╝
-//
-// compositor: niri | terminal: ghostty | shell: noctalia
 prefer-no-csd
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
-// ── environment ────────────────────────────────────────────────────────────────
+// environment
 environment {
     ELECTRON_OZONE_PLATFORM_HINT "wayland"
     QT_QPA_PLATFORM_THEME "qt6ct"
 }
 
-// ── autostart ──────────────────────────────────────────────────────────────────
+// autostart
 spawn-at-startup "pactl" "set-sink-mute" "@DEFAULT_SINK@" "0"
 spawn-at-startup "razer-cli" "-d" "Razer Basilisk V3" "-e" "static" "-c" "ffffff"
-
-// noctalia shell (replaces awww-daemon, wofi, etc.)
 spawn-at-startup "noctalia-shell"
-
 spawn-at-startup "vicinae" "server"
 
 hotkey-overlay {
     skip-at-startup
 }
 
-// ── input ──────────────────────────────────────────────────────────────────────
+// input
 input {
     keyboard {
         xkb { layout "us"; }
@@ -53,13 +42,13 @@ cursor {
     hide-after-inactive-ms 3000
 }
 
-// ── output ─────────────────────────────────────────────────────────────────────
+// output
 output "eDP-1" {
     mode "2560x1440@240"
     scale 1.5
 }
 
-// ── layout ─────────────────────────────────────────────────────────────────────
+// layout
 layout {
     gaps 0
     always-center-single-column
@@ -86,45 +75,38 @@ layout {
         color "#0007"
     }
 
-    // transparent so noctalia wallpaper shows through
+    // transparent for noctalia wallpaper
     background-color "transparent"
 }
 
-// ── overview ───────────────────────────────────────────────────────────────────
 overview {
     workspace-shadow {
         off
     }
 }
 
-// ── gestures ───────────────────────────────────────────────────────────────────
 gestures {
     hot-corners {
         off
     }
 }
 
-// ── debug (nvidia + noctalia) ──────────────────────────────────────────────────
 debug {
-    // allows notification actions and window activation from noctalia
+    // noctalia needs this for notifications + window activation
     honor-xdg-activation-with-invalid-serial
 }
 
-// ── layer rules ────────────────────────────────────────────────────────────────
-
-// noctalia wallpaper — stationary behind all workspaces
+// layer rules
 layer-rule {
     match namespace="^noctalia-wallpaper*"
     place-within-backdrop true
 }
 
-// noctalia overview wallpaper (enable if using blurred overview option)
 // layer-rule {
 //     match namespace="^noctalia-overview*"
 //     place-within-backdrop true
 // }
 
-// noctalia blur for bar, launcher overlay, dock
 layer-rule {
     match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
     background-effect {
@@ -132,14 +114,12 @@ layer-rule {
     }
 }
 
-// ── window rules ───────────────────────────────────────────────────────────────
-// firefox picture-in-picture
+// window rules
 window-rule {
     match app-id=r#"firefox$"# title="^Picture-in-Picture$"
     open-floating true
 }
 
-// global decoration
 window-rule {
     geometry-corner-radius 0
     clip-to-geometry true
@@ -155,7 +135,7 @@ window-rule {
     opacity 0.55
 }
 
-// ── animations ─────────────────────────────────────────────────────────────────
+// animations
 animations {
     slowdown 1.0
 
@@ -163,27 +143,23 @@ animations {
         duration-ms 200
         curve "ease-out-expo"
     }
-
     window-close {
         duration-ms 200
         curve "ease-out-expo"
     }
-
     horizontal-view-movement {
         duration-ms 170
         curve "ease-out-expo"
     }
-
     workspace-switch {
         duration-ms 170
         curve "ease-out-expo"
     }
 }
 
-// ── keybinds ───────────────────────────────────────────────────────────────────
+// keybinds
 binds {
-
-    // ── apps ───────────────────────────────────────────────────────────────────
+    // apps
     Mod+BackSpace { spawn "ghostty" "-e" "nvim" "/home/isaac/.config/niri/config.kdl"; }
     Mod+Q         { spawn "ghostty"; }
     Mod+A         { spawn "bash" "-c" "~/.config/niri/scripts/ai-panel.sh"; }
@@ -193,19 +169,20 @@ binds {
     Mod+O         { spawn "obsidian"; }
     Mod+S         { spawn "ghostty" "-e" "spotify_player"; }
     Alt+Space    repeat=false { spawn "vicinae" "toggle"; }
-    // ── noctalia shell ─────────────────────────────────────────────────────────
+
+    // noctalia shell
     Mod+P         { spawn-sh "noctalia-shell ipc call controlCenter toggle"; }
     Mod+Comma     { spawn-sh "noctalia-shell ipc call settings toggle"; }
     Mod+Shift+Q   { spawn-sh "noctalia-shell ipc call sessionMenu toggle"; }
-    Alt+W         { spawn-sh "noctalia-shell ipc call wallpaper toggle";}
-    Alt+T         { spawn-sh "noctalia-shell ipc call bar toggle";}
+    Alt+W         { spawn-sh "noctalia-shell ipc call wallpaper toggle"; }
+    Alt+T         { spawn-sh "noctalia-shell ipc call bar toggle"; }
     Mod+Alt+L     { spawn-sh "noctalia-shell ipc call lockScreen lock"; }
 
-    // ── niri session ───────────────────────────────────────────────────────────
+    // session
     Mod+Tab       repeat=false { toggle-overview; }
     Mod+Shift+Escape { show-hotkey-overlay; }
 
-    // ── window management ──────────────────────────────────────────────────────
+    // window management
     Mod+W         { close-window; }
     Mod+C         { toggle-window-floating; }
     Mod+V         { maximize-column; }
@@ -214,7 +191,7 @@ binds {
     Mod+Shift+W   { toggle-column-tabbed-display; }
     Mod+Ctrl+F    { expand-column-to-available-width; }
 
-    // column / window sizing
+    // sizing
     Mod+BracketRight { set-column-width "+10%"; }
     Mod+BracketLeft  { set-column-width "-10%"; }
     Mod+Minus        { set-column-width "-10%"; }
@@ -225,33 +202,21 @@ binds {
     Mod+Shift+R      { switch-preset-window-height; }
     Mod+Ctrl+R       { reset-window-height; }
 
-    // ── focus ──────────────────────────────────────────────────────────────────
+    // focus
     Mod+H     { focus-column-left; }
     Mod+L     { focus-column-right; }
-    Mod+K     { focus-window-up; }
-    Mod+J     { focus-window-down; }
     Mod+Left  { focus-column-left; }
     Mod+Right { focus-column-right; }
-    Mod+Up    { focus-window-up; }
-    Mod+Down  { focus-window-down; }
-
-    // monitor focus
     Mod+Shift+H { focus-monitor-left; }
     Mod+Shift+L { focus-monitor-right; }
-    Mod+Shift+K { focus-monitor-up; }
-    Mod+Shift+J { focus-monitor-down; }
 
-    // ── move windows ───────────────────────────────────────────────────────────
+    // move
     Alt+Left  { move-column-left; }
     Alt+Right { move-column-right; }
-    Alt+Up    { move-window-up; }
-    Alt+Down  { move-window-down; }
     Alt+H     { move-column-left; }
     Alt+L     { move-column-right; }
-    Alt+K     { move-window-up; }
-    Alt+J     { move-window-down; }
 
-    // ── workspaces ─────────────────────────────────────────────────────────────
+    // workspaces
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
     Mod+3 { focus-workspace 3; }
@@ -263,7 +228,6 @@ binds {
     Mod+9 { focus-workspace 9; }
     Mod+0 { focus-workspace 10; }
 
-    // move window to workspace
     Mod+Shift+1 { move-window-to-workspace 1; }
     Mod+Shift+2 { move-window-to-workspace 2; }
     Mod+Shift+3 { move-window-to-workspace 3; }
@@ -275,7 +239,6 @@ binds {
     Mod+Shift+9 { move-window-to-workspace 9; }
     Mod+Shift+0 { move-window-to-workspace 10; }
 
-    // move column to workspace
     Mod+Ctrl+1 { move-column-to-workspace 1; }
     Mod+Ctrl+2 { move-column-to-workspace 2; }
     Mod+Ctrl+3 { move-column-to-workspace 3; }
@@ -286,17 +249,15 @@ binds {
     Mod+Ctrl+8 { move-column-to-workspace 8; }
     Mod+Ctrl+9 { move-column-to-workspace 9; }
 
-    // workspace traversal
     Mod+Page_Down      { focus-workspace-down; }
     Mod+Page_Up        { focus-workspace-up; }
-    Ctrl+J              { focus-workspace-down; }
-    Ctrl+K              { focus-workspace-up; }
+    Mod+J              { focus-workspace-down; }
+    Mod+K              { focus-workspace-up; }
     Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
     Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
     Mod+Ctrl+U         { move-column-to-workspace-down; }
     Mod+Ctrl+I         { move-column-to-workspace-up; }
 
-    // mouse wheel navigation
     Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
     Mod+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
     Mod+WheelScrollRight                     { focus-column-right; }
@@ -304,38 +265,28 @@ binds {
     Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
     Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
 
-    // ── screenshots ────────────────────────────────────────────────────────────
-    // // region select → clipboard
-Mod+Shift+S { spawn "bash" "-c" "grim -g \"$(slurp)\" - | wl-copy && notify-send 'Screenshot' 'Copied to clipboard'"; }
+    // screenshots
+    Mod+Shift+S { spawn "bash" "-c" "grim -g \"$(slurp)\" - | wl-copy && notify-send 'Screenshot' 'Copied to clipboard'"; }
+    Print       { spawn "bash" "-c" "f=~/Pictures/screenshots/$(date +%Y%m%d_%H%M%S).png && grim -g \"$(slurp)\" \"$f\" && notify-send 'Screenshot saved' \"$f\""; }
+    Alt+Print   { spawn "bash" "-c" "f=~/Pictures/screenshots/$(date +%Y%m%d_%H%M%S).png && grim \"$f\" && notify-send 'Screenshot saved' \"$f\""; }
 
-// region select → file
-Print { spawn "bash" "-c" "f=~/Pictures/screenshots/$(date +%Y%m%d_%H%M%S).png && grim -g \"$(slurp)\" \"$f\" && notify-send 'Screenshot saved' \"$f\""; }
-
-// full screen → file
-Alt+Print { spawn "bash" "-c" "f=~/Pictures/screenshots/$(date +%Y%m%d_%H%M%S).png && grim \"$f\" && notify-send 'Screenshot saved' \"$f\""; }
-
-    // ── volume (noctalia IPC) ──────────────────────────────────────────────────
+    // volume
     XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
     XF86AudioMute        allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
     XF86AudioMicMute     allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "muteInput"; }
 
-    // ── brightness (noctalia IPC) ──────────────────────────────────────────────
+    // brightness
     XF86MonBrightnessUp   allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
     Alt+BracketRight      allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
     Alt+BracketLeft       allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
 
-    // ── media (noctalia IPC) ───────────────────────────────────────────────────
+    // media
     XF86AudioNext  allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "next"; }
     XF86AudioPrev  allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "previous"; }
     XF86AudioPlay  allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "playPause"; }
     XF86AudioPause allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "playPause"; }
 }
 
-
-
-
-
 include "./noctalia.kdl"
-

@@ -14,7 +14,7 @@
     ./hardware-configuration.nix
   ];
 
-  # ── boot ───────────────────────────────────────────────────────────────────
+  # boot
   boot.loader.limine.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.limine.maxGenerations = 5;
@@ -43,7 +43,7 @@
         image_path: guid(88F3BEF0-F939-4420-97C0-431E89278101):/efi/Microsoft/Boot/bootmgfw.efi
   '';
 
-  # ── nix ────────────────────────────────────────────────────────────────────
+  # nix
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
@@ -61,11 +61,11 @@
   programs.nix-ld.enable = true;
   programs.nix-index.enable = true;
 
-  # ── networking ─────────────────────────────────────────────────────────────
+  # networking
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  # ── audio ──────────────────────────────────────────────────────────────────
+  # audio
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -75,13 +75,13 @@
     wireplumber.enable = true;
   };
 
-  # ── graphics ───────────────────────────────────────────────────────────────
+  # graphics
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
   };
 
-  # ── fonts ──────────────────────────────────────────────────────────────────
+  # fonts
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
     noto-fonts
@@ -90,7 +90,7 @@
     noto-fonts-color-emoji
   ];
 
-  # ── gtk / portals ──────────────────────────────────────────────────────────
+  # gtk / portals
   programs.dconf.enable = true;
   services.gvfs.enable = true;
 
@@ -105,7 +105,7 @@
 
   programs.wireshark.enable = true;
 
-  # ── localization ───────────────────────────────────────────────────────────
+  # localization
   time.timeZone = "Europe/London";
   i18n.defaultLocale = "en_HK.UTF-8";
   i18n.extraLocaleSettings = {
@@ -124,7 +124,7 @@
     variant = "";
   };
 
-  # ── users ──────────────────────────────────────────────────────────────────
+  # users
   users.users."isaac" = {
     isNormalUser = true;
     description = "Isaac Wong";
@@ -138,7 +138,7 @@
     packages = with pkgs; [ ];
   };
 
-  # ── session environment ────────────────────────────────────────────────────
+  # session env
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";
@@ -149,7 +149,7 @@
     VISUAL = "nvim";
   };
 
-  # ── desktop: niri + greetd + portals ───────────────────────────────────────
+  # desktop
   programs.niri.enable = true;
   services.greetd = {
     enable = true;
@@ -181,7 +181,7 @@
     };
   };
 
-  # ── shell ──────────────────────────────────────────────────────────────────
+  # shell
   programs.zsh = {
     enable = true;
     autosuggestions.enable = true;
@@ -194,13 +194,13 @@
     enableZshIntegration = true;
   };
 
-  # ── dictation ──────────────────────────────────────────────────────────────
+  # dictation
   systemd.user.services.whisper-dictation = {
     enable = true;
     wantedBy = [ "graphical-session.target" ];
   };
 
-  # ── git ────────────────────────────────────────────────────────────────────
+  # git
   programs.git = {
     enable = true;
     config = {
@@ -210,7 +210,7 @@
     };
   };
 
-  # ── packages ───────────────────────────────────────────────────────────────
+  # packages
   environment.systemPackages = with pkgs; [
     # cli
     neovim
@@ -308,6 +308,6 @@
     anifetch.packages.${pkgs.system}.default
   ];
 
-  # ── system state version ───────────────────────────────────────────────────
+  # system
   system.stateVersion = "26.05";
 }

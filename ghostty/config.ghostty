@@ -1,25 +1,17 @@
-# ── font ─────────────────────────────────────────────────────────────────
 font-family = JetBrainsMono Nerd Font
 font-size = 12
 
-# ── theme ────────────────────────────────────────────────────────────────
 window-decoration = false
 background-opacity = 0.95
 background-blur-radius = 20
 unfocused-split-opacity = 0.85
 
-# ── cursor ───────────────────────────────────────────────────────────────
 cursor-style = block
 cursor-style-blink = true
 
-# ── window ───────────────────────────────────────────────────────────────
 window-padding-x = 8
 window-padding-y = 8
 confirm-close-surface = false
 
-# ── shell integration ────────────────────────────────────────────────────
 shell-integration = zsh
 shell-integration-features = cursor,sudo,title
-
-# ── others ───────────────────────────────────────────────────────────────
-confirm-close-surface = false

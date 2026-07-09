@@ -1,4 +1,4 @@
-# ── aliases ────────────────────────────────────────────────────────────────
+# aliases
 alias rb='nh os switch ~/git/dotfiles/nixos'
 alias nixedit='nvim ~/git/dotfiles/nixos/configuration.nix'
 alias nixflake='nvim ~/git/dotfiles/nixos/flake.nix'
@@ -12,7 +12,7 @@ alias spt='spotify_player'
 alias zconf='nvim ~/.zshrc'
 alias wtf='tldr'
 
-# ── zinit bootstrap ────────────────────────────────────────────────────────
+# zinit
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 [ ! -d "$ZINIT_HOME" ] && mkdir -p "$(dirname "$ZINIT_HOME")"
 [ ! -d "$ZINIT_HOME/.git" ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
@@ -33,40 +33,32 @@ zinit light zsh-users/zsh-history-substring-search
 zinit ice wait lucid
 zinit light hlissner/zsh-autopair
 
-# ── options ────────────────────────────────────────────────────────────────
-setopt NOMATCH
-setopt NOTIFY
+# options
+setopt NOMATCH NOTIFY
 unsetopt BEEP
 bindkey -v
 
-# ── history ────────────────────────────────────────────────────────────────
+# history
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_DUPS
+setopt SHARE_HISTORY HIST_IGNORE_DUPS
 
-# ── navigation ─────────────────────────────────────────────────────────────
-setopt AUTO_CD
-setopt AUTO_PUSHD
+# navigation
+setopt AUTO_CD AUTO_PUSHD
 
-# ── editor ─────────────────────────────────────────────────────────────────
-export EDITOR=nvim
-export VISUAL=nvim
+# editor
+export EDITOR=nvim VISUAL=nvim
 
-# ── bun ────────────────────────────────────────────────────────────────────
+# bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# ── completion ─────────────────────────────────────────────────────────────
+# completion
 zstyle :compinstall filename '/home/isaac/.zshrc'
 autoload -Uz compinit
 compinit -C
-
-# replay any compdef calls that turbo-loaded (wait lucid) plugins queued
-# before compinit was available — this is what your old mtime-check was
-# trying to approximate, but zinit's own mechanism is race-free.
 zinit cdreplay -q
 
-# ── prompt ─────────────────────────────────────────────────────────────────
+# prompt
 eval "$(starship init zsh)"

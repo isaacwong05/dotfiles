@@ -1,2 +1,10 @@
 # nvim runtime state (regenerated, not config)
 nvim/lazy-lock.json
+
+# personal assistant context, not dotfiles
+AGENTS.md
+
+# editor / os cruft
+*~
+*.swp
+.DS_Store
