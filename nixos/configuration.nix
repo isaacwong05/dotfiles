@@ -232,6 +232,9 @@
     dust
     btop
     jq
+    cmatrix
+    tty-clock
+    lavat
     tldr
     hexyl
     xxd
