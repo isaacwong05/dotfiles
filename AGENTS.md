@@ -16,9 +16,9 @@ Isaac's personal NixOS + niri + LazyVim + zsh + ghostty dotfiles. Repo on GitHub
 | `niri/noctalia.kdl` | Noctalia shell config | KDL |
 | `niri/scripts/` | niri-bound shell scripts | shell |
 | `ghostty/config` | Ghostty terminal config | ghostty k/v |
-| `ghostty/config.ghostty` | (alternate/legacy — confirm which is live before editing) | ghostty k/v |
+| `ghostty/config.ghostty` | (alternate/legacy — likely unused; `config` is the live one) | ghostty k/v |
 | `ghostty/themes/noctalia` | Custom theme | — |
-| `nvim/` | LazyVim config; deployed by copy to `~/.config/nvim` | Lua |
+| `nvim/` | LazyVim config; symlinked to `~/.config/nvim` | Lua |
 | `nvim/lua/plugins/*.lua` | lazy.nvim plugin specs (one file per plugin/area) | Lua |
 | `nvim/lua/config/{autocmds,keymaps,lazy,options}.lua` | LazyVim core overrides | Lua |
 | `.zshrc` | zsh config (zinit, starship, zoxide, aliases) | shell |
@@ -65,6 +65,46 @@ Nix files are the source of truth too — edit the repo, then rebuild. Never edi
   unless startup load is required, include keymaps in the spec via `keys = {}`.
 - Keep the monochrome/minimal aesthetic; don't introduce color themes unasked.
 - Commit with clear messages; the repo is public on GitHub.
+
+## Branch workflow
+
+Three long-lived branches, all currently at the same point:
+
+| Branch | Use for |
+|--------|---------|
+| `main` | Stable, deployable state. Merge finished work here. |
+| `feature` | Adding new things: new plugins, packages, keybinds, scripts, flake inputs. |
+| `refactor` | Restructuring/optimizing existing configs without changing behavior (reformatting, splitting files, dedup, perf). |
+
+### Rules
+
+- **Start every task on the right branch.** Ask (or decide) whether the work is a
+  feature or a refactor before editing. `git switch` to that branch first.
+- **Commit on the branch, not `main`.** Only merge into `main` once the work is
+  validated and the user is happy.
+- **Switching branches changes the live system.** Because `~/.config/{nvim,niri,ghostty}`
+  and `~/.zshrc` are symlinks into this repo, `git switch feature` instantly changes
+  the running config. Useful for real-world testing, but a half-finished branch can
+  leave the shell/editor/compositor in a broken state. Warn the user before switching
+  if the branch has untested/broken work, and prefer testing risky changes on a
+  throwaway branch first.
+- **Validate before merging.** On the working branch, run the relevant check from
+  "Validation commands" above (`niri validate`, `zsh -n`, `nh os test`, etc.) before
+  merging into `main`.
+- **Don't delete the long-lived branches** (`main`, `feature`, `refactor`). Throwaway
+  test branches can be deleted after merging.
+- **Keep branches in sync with `main` before starting** new work: `git switch feature &&
+  git merge main` (or rebase) so you're not building on stale config.
+
+### Typical flow
+
+```bash
+git switch feature           # or: refactor
+# ... make edits, validate ...
+git commit -m "add telescope-fzf-native plugin"
+git switch main && git merge feature
+git switch feature && git merge main   # keep branch up to date
+```
 
 ## Git commit style
 
