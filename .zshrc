@@ -3,6 +3,7 @@ alias rb='nh os switch ~/git/dotfiles/nixos'
 alias nixedit='nvim ~/git/dotfiles/nixos/configuration.nix'
 alias nixflake='nvim ~/git/dotfiles/nixos/flake.nix'
 alias nixup="~/git/dotfiles/nixos/scripts/update.sh"
+alias checkup="~/git/dotfiles/nixos/scripts/checkup.sh"
 alias cl='clear'
 alias ls='eza --icons=always -a'
 alias l='ls'

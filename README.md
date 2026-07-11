@@ -10,7 +10,8 @@ a [niri](https://github.com/YaLTeR/niri) scrolling-tiling wayland setup on nixos
 
 | path       | description                                              |
 | ---------- | -------------------------------------------------------- |
-| `nixos/`   | nixos system config (flake, configuration.nix, home.nix) |
+| `nixos/`        | nixos system config (flake, configuration.nix, home.nix) |
+| `nixos/scripts/` | helper shell scripts (`update.sh`, `checkup.sh`)          |
 | `niri/`    | niri compositor config, keybinds, and scripts            |
 | `ghostty/` | ghostty terminal config                                  |
 | `nvim/`    | neovim config (lazyvim-based)                            |
@@ -44,3 +45,12 @@ for the nixos config, point your rebuild at the flake:
 ```bash
 nh os switch ~/git/dotfiles/nixos   # or: sudo nixos-rebuild switch --flake ~/git/dotfiles/nixos#nixos
 ```
+
+## scripts
+
+two helper scripts live in `nixos/scripts/`, wired up as zsh aliases:
+
+| alias | script | what it does |
+| ----- | ------ | ------------ |
+| `nixup` | `update.sh` | `nix flake update`, rebuild via `nh os switch`, then optionally commit + push |
+| `checkup` | `checkup.sh` | nixos health check (disk, generations, failed units, journal, stale gc-roots); pass `--clean` to gc + optimise the store + vacuum the journal |
