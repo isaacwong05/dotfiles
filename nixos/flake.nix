@@ -32,6 +32,10 @@
       url = "github:aashish-thapa/wlctl";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    herdr = {
+      url = "github:ogulcancelik/herdr/v0.7.3";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     {
@@ -44,6 +48,7 @@
       home-manager,
       anifetch,
       wlctl,
+      herdr,
       ...
     }@inputs:
     {
@@ -57,6 +62,7 @@
             anifetch
             whisper-dictation
             wlctl
+            herdr
             ;
         };
         modules = [

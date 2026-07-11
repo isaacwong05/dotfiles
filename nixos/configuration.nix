@@ -8,6 +8,7 @@
   whisper-dictation,
   anifetch,
   wlctl,
+  herdr,
   ...
 }:
 {
@@ -340,6 +341,7 @@
     whisper-dictation.packages.${pkgs.system}.default
     anifetch.packages.${pkgs.system}.default
     wlctl.packages.${pkgs.system}.default
+    herdr.packages.${pkgs.system}.default
 
     # system
     pkgs.xwayland-satellite
