@@ -2,11 +2,13 @@
 alias rb='nh os switch ~/git/dotfiles/nixos'
 alias nixedit='nvim ~/git/dotfiles/nixos/configuration.nix'
 alias nixflake='nvim ~/git/dotfiles/nixos/flake.nix'
+alias nixup="~/git/dotfiles/nixos/scripts/update.sh"
 alias cl='clear'
 alias ls='eza --icons=always -a'
 alias l='ls'
 alias ff='fastfetch'
 alias af='anifetch ~/nixos-logo.mp4 -W 30 -H 15 -fr -ca "--symbols braille --colors 2 --fg-only" -c ~/.config/fastfetch/anifetch.jsonc'
+alias nt='wlctl'
 alias spf='superfile'
 alias spt='spotify_player'
 alias zconf='nvim ~/.zshrc'
@@ -62,3 +64,7 @@ zinit cdreplay -q
 
 # prompt
 eval "$(starship init zsh)"
+
+export PATH="$PATH:/home/isaac/.local/go/bin"
+
+export PATH="$PATH:/home/isaac/go/bin"

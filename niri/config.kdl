@@ -12,6 +12,7 @@ spawn-at-startup "pactl" "set-sink-mute" "@DEFAULT_SINK@" "0"
 spawn-at-startup "razer-cli" "-d" "Razer Basilisk V3" "-e" "static" "-c" "ffffff"
 spawn-at-startup "noctalia-shell"
 spawn-at-startup "vicinae" "server"
+spawn-at-startup "xwayland-satellite"
 
 hotkey-overlay {
     skip-at-startup
@@ -168,6 +169,7 @@ binds {
     Mod+F         { spawn "helium" "--ozone-platform=wayland"; }
     Mod+O         { spawn "obsidian"; }
     Mod+S         { spawn "ghostty" "-e" "spotify_player"; }
+    Mod+Shift+Delete { spawn "swaylock-plugin" "--command-each" "windowtolayer ghostty -e lavat -g -c D8D8D8 -k FFFFFF -G"; }
     Alt+Space    repeat=false { spawn "vicinae" "toggle"; }
 
     // noctalia shell

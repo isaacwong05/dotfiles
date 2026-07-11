@@ -7,6 +7,7 @@
   quickshell,
   whisper-dictation,
   anifetch,
+  wlctl,
   ...
 }:
 {
@@ -75,6 +76,30 @@
     wireplumber.enable = true;
   };
 
+  # hardware
+  services.upower.enable = true;
+  hardware.bluetooth.enable = true;
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    powerManagement.finegrained = true;
+    open = false;
+    nvidiaSettings = true;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true;
+      };
+      amdgpuBusId = "PCI:6:0:0";
+      nvidiaBusId = "PCI:1:0:0";
+    };
+  };
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   # graphics
   hardware.graphics = {
     enable = true;
@@ -93,6 +118,7 @@
   # gtk / portals
   programs.dconf.enable = true;
   services.gvfs.enable = true;
+  services.flatpak.enable = true;
 
   systemd.user.services.ydotool = {
     description = "ydotool daemon";
@@ -148,6 +174,9 @@
     EDITOR = "nvim";
     VISUAL = "nvim";
   };
+  environment.sessionVariables.XDG_DATA_DIRS = [ "/var/lib/flatpak/exports/share" ];
+  # configuration.nix
+  security.pam.services.swaylock-plugin = { };
 
   # desktop
   programs.niri.enable = true;
@@ -223,6 +252,7 @@
     fastfetch
     tree-sitter
     ripgrep
+    ani-cli
     fd
     fzf
     bun
@@ -231,6 +261,7 @@
     eza
     dust
     btop
+    golazo
     jq
     cmatrix
     tty-clock
@@ -243,6 +274,8 @@
     p7zip
     unrar
     xz
+    pkgs.python314Packages.speedtest-cli
+
     (callPackage ./packages/tuxedo.nix { })
 
     # dev
@@ -306,6 +339,10 @@
     quickshell.packages.${pkgs.system}.default
     whisper-dictation.packages.${pkgs.system}.default
     anifetch.packages.${pkgs.system}.default
+    wlctl.packages.${pkgs.system}.default
+
+    # system
+    pkgs.xwayland-satellite
   ];
 
   # system
