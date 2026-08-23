@@ -80,7 +80,96 @@ starship.toml, superfile, tuxedo, vicinae (SKIP if it depends on noctalia),
 xsettingsd, zed, autostart. symlink the ones that are pure config; skip
 noctalia entirely.
 
-### 5. display manager + compositor
+### 5. bootloader — limine (manual, not a standard arch bootloader)
+this is the non-standard part. arch defaults to systemd-boot or grub; i use
+[limine](https://limine-bootloader.org/) instead, and this machine **dual-boots
+windows 11 25h2**. on nixos a module handled all of this; on arch it's manual.
+
+reference: `nixos-archive/configuration.nix` `boot.loader.limine.*` and
+`boot.loader.limine.extraEntries`.
+
+**install:**
+- `paru -S limine` (AUR — check it's not flagged out-of-date; if the AUR pkg
+  is stale or missing, stop and ask before building from source).
+- `efibootmgr` (to manage the UEFI boot entry).
+
+**EFI system partition (ESP):**
+- find the ESP: `lsblk -f` and look for the vfat partition mounted at
+  `/boot` or `/efi`. if it's not mounted, mount it (typically `/boot` for
+  limine). show me the layout before touching it.
+- `boot.loader.efi.canTouchEfiVariables = true` was set, so writing EFI vars
+  is expected.
+
+**deploy limine to the ESP:**
+- run `limine deploy <esp-device>` (e.g. `limine deploy /dev/nvme0n1pX`) to
+  install/refresh the limine binary on the ESP. do this after every limine
+  package upgrade.
+- create the UEFI boot entry pointing at limine's EFI binary via
+  `efibootmgr -c -d <disk> -p <part> -L "Limine" -l '\\EFI\\BOOT\\BOOTX64.EFI'`
+  (adjust the path to where `limine deploy` put it — check and show me).
+
+**limine.conf** — write to `/boot/limine/limine.conf` (or wherever the ESP
+mounts). port these exact settings from the old `extraConfig`:
+- `timeout: 5`
+- `remember_last_entry: no`
+- terminal palette (monochrome white-on-black):
+  `term_palette: 0f0f0f;e8e8e8;ffffff;f0f0f0;c8c8c8;e0e0e0;d8d8d8;f5f5f5`
+  `term_palette_bright: 1a1a1a;ffffff;ffffff;ffffff;e8e8e8;f5f5f5;eeeeee;ffffff`
+  `term_background: 0f0f0f` / `term_foreground: f0f0f0`
+  `term_background_bright: 1a1a1a` / `term_foreground_bright: ffffff`
+  `interface_branding_colour/interface_help_color: ffffff` (and bright)
+- no wallpapers (`maxGenerations` wallpaper list was force-empty).
+
+**arch kernel entries** — nixos auto-managed up to 5 generations; arch has no
+generations, so write a static entry pointing at the installed kernel +
+initramfs. for the `linux` package on a standard arch layout that's usually:
+```
+/Arch Linux
+    protocol: linux
+    kernel_path: boot():/vmlinuz-linux
+    module_path: boot():/initramfs-linux.img
+    cmdline: root=PARTUUID=<root-partuuid> rw
+```
+- get the root PARTUUID from `blkid` for the root partition — show it to me.
+- if i'm on `linux-lts` instead, adjust filenames (`vmlinuz-linux-lts`,
+  `initramfs-linux-lts.img`).
+- add a fallback entry pointing at `initramfs-linux-fallback.img`.
+
+**windows dual-boot entry** — port exactly from `extraEntries`:
+```
+/+Other systems and bootloaders
+//Windows Boot Manager
+    comment: Windows 11 25H2
+    protocol: efi_chainload
+    image_path: guid(88F3BEF0-F939-4420-97C0-431E89278101):/efi/Microsoft/Boot/bootmgfw.efi
+```
+that GUID (`88F3BEF0-F939-4420-97C0-431E89278101`) is the windows ESP
+partition guid from this machine. verify it still matches with
+`blkid` / `lsblk -o +PARTUUID` before relying on it — if the windows install
+was reinstalled or partitions changed, the guid differs and the entry won't
+boot. show me the current windows ESP guid so i can confirm.
+
+**kernel-update hook** — on nixos the module re-ran limine after each
+generation; on arch, kernel updates replace `/boot/vmlinuz-linux` and
+`/boot/initramfs-linux.img` in place, so the limine.conf paths stay valid and
+no redeploy is needed for kernel bumps. BUT `limine deploy` must re-run after
+any `limine` package upgrade (the bootloader binary itself changes). set up a
+pacman hook `/etc/pacman.d/hooks/limine.hook` that runs `limine deploy` on
+the ESP after the `limine` package upgrades — show me the hook before
+installing it.
+
+**secure boot** — nixos had `secureBoot.enable`, `enrollConfig`, and
+`panicOnChecksumMismatch`. this is advanced and easy to brick a boot from.
+DO NOT touch secure boot until i say so. when i'm ready, the plan is:
+- `sbctl` to create + enroll keys into UEFI.
+- sign the limine binary with sbctl.
+- enroll limine's config hash (limine's own `enrollConfig` equivalent) so
+  UEFI verifies both the loader and its config.
+- test with `sbctl verify` before rebooting.
+for now just install `sbctl` and leave secure boot in its current state
+(likely setup mode or off). tell me what state the firmware is in.
+
+### 6. display manager + compositor
 - install `greetd` and `tuigreet`. port the exact greetd config from
   `nixos-archive/configuration.nix` (the tuigreet flags, theme string,
   `--cmd niri-session`). write it to `/etc/greetd/config.toml`.
@@ -88,12 +177,12 @@ noctalia entirely.
 - xwayland-satellite: install and autostart it (niri spawns it, or add to
   niri's `spawn-at-startup`).
 
-### 6. audio
+### 7. audio
 - install `pipewire`, `wireplumber`, `pipewire-pulse`, `pipewire-alsa`,
   `pipewire-jack`, `rtkit`, `pwvucontrol`, `playerctl`.
 - enable: `systemctl --user enable --now pipewire wireplumber`.
 
-### 7. nvidia hybrid graphics
+### 8. nvidia hybrid graphics
 this machine is ryzen 7 6800hs with nvidia + amdgpu hybrid (prime offload).
 from the old config:
 - nvidia bus id: `PCI:1:0:0`
@@ -104,7 +193,7 @@ nvidia-dkms + nvidia-open path — ask me which i want before installing).
 set up the prime offload config (env vars + xorg.conf.d snippet or the
 wayland equivalent). verify `nvidia-smi` works and `prime-offload` runs.
 
-### 8. networking & system services
+### 9. networking & system services
 - `networkmanager`: install + `systemctl enable --now NetworkManager`.
 - `tailscale`: `paru -S tailscale` + `systemctl enable --now tailscaled`.
   set `--operator=isaac` in the tailscaled service so i can up/down without sudo.
@@ -115,11 +204,11 @@ wayland equivalent). verify `nvidia-smi` works and `prime-offload` runs.
 - `ydotool`: install `ydotool`, enable the daemon
   (`systemctl enable --now ydotoold`), add me to the `input` group.
 
-### 9. portals
+### 10. portals
 install `xdg-desktop-portal`, `xdg-desktop-portal-gtk`,
 `xdg-desktop-portal-wlr`. set the niri default to gtk (see old config).
 
-### 10. theming
+### 11. theming
 from `home.nix`:
 - gtk theme: `catppuccin-mocha-standard-blue-dark` (install `catppuccin-gtk-theme`)
 - icon theme: `papirus-dark` (`papirus-icon-theme`)
@@ -129,7 +218,7 @@ from `home.nix`:
 - `nwg-look` for gtk theme picker, `qt6ct` for qt6 appearance.
 apply gtk settings via `gsettings` or `dconf`.
 
-### 11. lockscreen + idle
+### 12. lockscreen + idle
 - `swaylock-plugin`, `swayidle`, `windowtolayer`, `lavat` (AUR/build from
   source for windowtolayer — check AUR first).
 - swayidle config from `home.nix`: lock at 5m with
@@ -137,7 +226,7 @@ apply gtk settings via `gsettings` or `dconf`.
   power-off monitors at 10m, lock before-sleep.
 - start swayidle as a user service or from niri's `spawn-at-startup`.
 
-### 12. dictation (whisper-cpp push-to-talk) — port manually
+### 13. dictation (whisper-cpp push-to-talk) — port manually
 this is the one custom thing. the nixos overlay built:
 - `whisper-dict-daemon` — a python evdev hold-to-talk daemon
 - `whisper-dict` — a toggle fallback shell script
@@ -158,14 +247,14 @@ file has the full pipeline. to port:
    key code it listens for).
 ask me before you start this — it's fiddly and i want to review each step.
 
-### 13. locale
+### 14. locale
 - timezone: `Europe/London` → `timedatectl set-timezone Europe/London`.
 - locale: default `en_HK.UTF-8`, everything else `en_GB.UTF-8`. uncomment
   both in `/etc/locale.gen`, run `locale-gen`, set in `/etc/locale.conf`
   and `~/.config/environment.d/locale.conf`.
 - keyboard: `us` layout.
 
-### 14. env vars
+### 15. env vars
 from `nixos-archive/configuration.nix` `environment.sessionVariables`, port
 the non-nix ones to `~/.config/environment.d/` or `/etc/environment`:
 `NIXOS_OZONE_WL=1` (drop the nixos prefix — just `OZONE_WL=1` or
@@ -173,7 +262,7 @@ the non-nix ones to `~/.config/environment.d/` or `/etc/environment`:
 `XDG_CURRENT_DESKTOP=niri`, `XDG_SESSION_TYPE=wayland`, `EDITOR=nvim`,
 `VISUAL=nvim`.
 
-### 15. my own quickshell panel (placeholder)
+### 16. my own quickshell panel (placeholder)
 i'm going to write my own quickshell panel to replace noctalia. for now:
 - install `quickshell` (AUR or build from
   `github:outfoxxed/quickshell`).
