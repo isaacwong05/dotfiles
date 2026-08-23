@@ -1,0 +1,9 @@
+theme = "gruvbox"
+language = "english"
+layout = "auto"
+welcome_shown = true
+ai_enabled = false
+ai_provider = "claude"
+ollama_url = "http://localhost:11434"
+ollama_model = "llama3"
+nixpkgs_channel = "auto"

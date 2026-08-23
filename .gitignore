@@ -3,8 +3,16 @@ nvim/lazy-lock.json
 
 # personal assistant context, not dotfiles
 AGENTS.md
+.remember/
+.claude/
 
 # editor / os cruft
 *~
 *.swp
 .DS_Store
+
+# app state / logs / sockets — never track
+config/herdr/*.log
+config/herdr/*.sock
+config/herdr/session*.json
+config/herdr/release-notes.json

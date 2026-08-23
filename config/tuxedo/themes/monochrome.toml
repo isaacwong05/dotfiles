@@ -1,0 +1,28 @@
+# Monochrome for tuxedo.
+# Copy into ${XDG_CONFIG_HOME:-$HOME/.config}/tuxedo/themes/ and press T to select it.
+name = Monochrome
+bg = #0f0f0f
+panel = #161616
+border = #2a2a2a
+fg = #e8e8e8
+dim = #6a6a6a
+accent = #d0d0d0
+cursor = #2a2a2a
+selection = #1c1c1c
+statusbar = #161616
+status_fg = #8a8a8a
+mode_fg = #0f0f0f
+mode_bg = #e8e8e8
+pri_a = #e88888
+pri_b = #e8c088
+pri_c = #a8c8a8
+pri_d = #88b0c8
+pri_other = #b0b0b0
+project = #c8c8c8
+context = #9a9a9a
+due = #e8c088
+overdue = #e88888
+today = #e8c088
+done = #5a5a5a
+selected = #1c1c1c
+matched = #c8b088

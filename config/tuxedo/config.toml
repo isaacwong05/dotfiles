@@ -1,0 +1,12 @@
+# tuxedo config
+theme = Monochrome
+density = comfortable
+sort = priority
+show_left = false
+show_right = false
+show_line_num = true
+show_status_bar = true
+show_done = false
+show_future = true
+share_token = a104cef50019c808cc91beb6e3e26e1622360b24d6e0ae19270d0c4217d75100
+share_port = 42423

@@ -1,0 +1,14 @@
+onboarding = false
+[ui.sound]
+enabled = true
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+[ui.toast]
+delivery = "herdr"
+
+[experimental]
+pane_history = true
+switch_ascii_input_source_in_prefix = false

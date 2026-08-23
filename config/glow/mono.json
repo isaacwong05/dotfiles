@@ -1,0 +1,128 @@
+{
+  "document": {
+    "block_prefix": "\n",
+    "block_suffix": "\n",
+    "color": "#e8e8e8",
+    "background_color": "#0f0f0f",
+    "margin": 2
+  },
+  "block_quote": {
+    "indent": 1,
+    "indent_token": "│ ",
+    "color": "#6a6a6a",
+    "italic": true
+  },
+  "paragraph": {
+    "block_suffix": "\n"
+  },
+  "list": {
+    "level_indent": 2
+  },
+  "heading": {
+    "block_suffix": "\n",
+    "bold": true
+  },
+  "h1": {
+    "prefix": "  ",
+    "suffix": "  ",
+    "color": "#0f0f0f",
+    "background_color": "#e8e8e8",
+    "bold": true,
+    "block_suffix": "\n"
+  },
+  "h2": {
+    "prefix": "── ",
+    "suffix": " ──",
+    "color": "#88b0c8",
+    "bold": true,
+    "block_suffix": "\n"
+  },
+  "h3": {
+    "prefix": "─── ",
+    "color": "#a8c8a8",
+    "bold": true
+  },
+  "h4": {
+    "prefix": "──── ",
+    "color": "#d0d0d0",
+    "bold": true
+  },
+  "h5": {
+    "prefix": "───── ",
+    "color": "#8a8a8a"
+  },
+  "h6": {
+    "prefix": "────── ",
+    "color": "#6a6a6a",
+    "italic": true
+  },
+  "text": {
+    "color": "#e8e8e8"
+  },
+  "strong": {
+    "bold": true,
+    "color": "#e8c088"
+  },
+  "emph": {
+    "italic": true,
+    "color": "#d0d0d0"
+  },
+  "strikethrough": {
+    "strikethrough": true,
+    "color": "#6a6a6a"
+  },
+  "code": {
+    "prefix": " ",
+    "suffix": " ",
+    "color": "#a8c8a8",
+    "background_color": "#161616"
+  },
+  "code_block": {
+    "margin": 2,
+    "chroma_formatter": "no-highlighting",
+    "color": "#a8c8a8",
+    "background_color": "#161616"
+  },
+  "link": {
+    "color": "#88b0c8",
+    "underline": true
+  },
+  "link_text": {
+    "color": "#e8e8e8",
+    "bold": true
+  },
+  "image": {
+    "color": "#88b0c8",
+    "underline": true
+  },
+  "image_text": {
+    "color": "#d0d0d0",
+    "bold": true
+  },
+  "hr": {
+    "color": "#2a2a2a",
+    "format": "────────────────────────────────────────────────────────────────────────────────"
+  },
+  "item": {
+    "block_prefix": "• ",
+    "color": "#e8e8e8"
+  },
+  "enumeration": {
+    "block_prefix": ". ",
+    "color": "#e8e8e8"
+  },
+  "task": {
+    "ticked": "✓ ",
+    "unticked": "○ "
+  },
+  "table": {
+    "center_separator": "┼",
+    "column_separator": "│",
+    "row_separator": "─"
+  },
+  "definition_description": {
+    "block_prefix": "\n  "
+  },
+  "html_block": {},
+  "html_span": {}
+}
