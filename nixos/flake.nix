@@ -3,7 +3,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     helium-browser.url = "github:schembriaiden/helium-browser-nix-flake";
-    whisper-dictation.url = "github:jacopone/whisper-dictation";
     quickshell = {
       url = "github:outfoxxed/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,7 +43,6 @@
       helium-browser,
       quickshell,
       noctalia,
-      whisper-dictation,
       home-manager,
       anifetch,
       wlctl,
@@ -60,14 +58,19 @@
             noctalia
             quickshell
             anifetch
-            whisper-dictation
             wlctl
             herdr
             ;
         };
         modules = [
           ./configuration.nix
-          { nixpkgs.overlays = [ (import ./overlays/lockscreen-tools.nix { inherit inputs; }) ]; }
+          {
+            nixpkgs.overlays = [
+              (import ./overlays/lockscreen-tools.nix { inherit inputs; })
+              (import ./overlays/whisper-dict.nix)
+              (import ./overlays/spotify-player.nix)
+            ];
+          }
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

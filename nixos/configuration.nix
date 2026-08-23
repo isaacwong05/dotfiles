@@ -5,7 +5,6 @@
   helium-browser,
   noctalia,
   quickshell,
-  whisper-dictation,
   anifetch,
   wlctl,
   herdr,
@@ -21,7 +20,15 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.limine.maxGenerations = 5;
   boot.loader.limine.style.wallpapers = lib.mkForce [ ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  # Secure Boot chain: UEFI verifies Limine, then Limine verifies its enrolled
+  # config and every hashed kernel/initrd. Keys are enrolled in UEFI separately.
+  boot.loader.limine.secureBoot.enable = true;
+  boot.loader.limine.enrollConfig = true;
+  boot.loader.limine.panicOnChecksumMismatch = true;
+  # NVIDIA 595.71.05 does not build with the current latest (7.2) kernel.
+  # Return to `linuxPackages_latest` once the driver or kernel is fixed.
+  boot.kernelPackages = pkgs.linuxPackages;
 
   boot.loader.limine.extraConfig = ''
     timeout: 5
@@ -66,6 +73,13 @@
   # networking
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
+
+  # Tailscale service and CLI. The operator may connect/disconnect from the
+  # Noctalia widget without sudo; it cannot change the system configuration.
+  services.tailscale = {
+    enable = true;
+    extraSetFlags = [ "--operator=isaac" ];
+  };
 
   # audio
   security.rtkit.enable = true;
@@ -224,10 +238,24 @@
     enableZshIntegration = true;
   };
 
-  # dictation
-  systemd.user.services.whisper-dictation = {
-    enable = true;
+  # dictation: hold-to-talk via evdev daemon (see overlays/whisper-dict.nix).
+  # hold Mod+D to record, release to transcribe. the daemon reads raw key
+  # events from /dev/input, so it sees press AND release (niri binds only
+  # fire on press). requires the `input` group (already in extraGroups above).
+  # the toggle fallback (whisper-dict) is also available for manual use.
+  systemd.user.services.whisper-dict-daemon = {
+    description = "Push-to-talk dictation daemon (evdev hold detection)";
+    # wantedBy starts it at login; partOf/after let `systemctl --user start
+    # graphical-session.target` pull it in even mid-session (e.g. right after
+    # `rb` switches to a new config without re-logging in).
     wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.whisper-dict-daemon}/bin/whisper-dict-daemon";
+      Restart = "on-failure";
+      RestartSec = 3;
+    };
   };
 
   # git
@@ -275,6 +303,7 @@
     p7zip
     unrar
     xz
+    glow
     pkgs.python314Packages.speedtest-cli
 
     (callPackage ./packages/tuxedo.nix { })
@@ -286,6 +315,7 @@
     gdb
     python3
     nmap
+    claude-code
 
     # nix tooling
     nh
@@ -307,6 +337,8 @@
     bitwarden-desktop
     beeper
     nautilus
+    obs-studio
+    anki
 
     # media
     mpv
@@ -314,6 +346,10 @@
     zathura
     spotify-player
     whisper-cpp
+    whisper-dict
+    whisper-dict-daemon
+    whisper-dict-mode-en
+    whisper-dict-mode-zh
     pwvucontrol
     playerctl
     brightnessctl
@@ -338,12 +374,12 @@
     helium-browser.packages.${pkgs.system}.default
     noctalia.packages.${pkgs.system}.default
     quickshell.packages.${pkgs.system}.default
-    whisper-dictation.packages.${pkgs.system}.default
     anifetch.packages.${pkgs.system}.default
     wlctl.packages.${pkgs.system}.default
     herdr.packages.${pkgs.system}.default
 
     # system
+    sbctl
     pkgs.xwayland-satellite
   ];
 

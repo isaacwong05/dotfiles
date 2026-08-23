@@ -5,6 +5,7 @@ alias nixflake='nvim ~/git/dotfiles/nixos/flake.nix'
 alias nixup="~/git/dotfiles/nixos/scripts/update.sh"
 alias checkup="~/git/dotfiles/nixos/scripts/checkup.sh"
 alias cl='clear'
+alias cd='z'
 alias ls='eza --icons=always -a'
 alias l='ls'
 alias ff='fastfetch'
@@ -14,6 +15,16 @@ alias spf='superfile'
 alias spt='spotify_player'
 alias zconf='nvim ~/.zshrc'
 alias wtf='tldr'
+alias lc='z $(find * -type d | fzf)'
+
+# dictation modes (hold Mod+D to talk)
+alias dten='whisper-dict-mode-en'
+alias dtzh='whisper-dict-mode-zh'
+
+# Tailscale
+alias ts='tailscale status'
+alias tsip='tailscale ip'
+alias tsping='tailscale ping'
 
 # zinit
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"

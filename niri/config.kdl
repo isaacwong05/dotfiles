@@ -7,6 +7,18 @@ environment {
     QT_QPA_PLATFORM_THEME "qt6ct"
 }
 
+// workspaces
+workspace "一"
+workspace "二"
+workspace "三"
+workspace "四"
+workspace "五"
+workspace "六"
+workspace "七"
+workspace "八"
+workspace "九"
+workspace "十"
+
 // autostart
 spawn-at-startup "pactl" "set-sink-mute" "@DEFAULT_SINK@" "0"
 spawn-at-startup "razer-cli" "-d" "Razer Basilisk V3" "-e" "static" "-c" "ffffff"
@@ -22,7 +34,6 @@ hotkey-overlay {
 input {
     keyboard {
         xkb { layout "us"; }
-        numlock
     }
 
     mouse {
@@ -47,6 +58,10 @@ cursor {
 output "eDP-1" {
     mode "2560x1440@240"
     scale 1.5
+}
+output "HDMI-A-1" {
+    mode "1920x1080@144"
+    scale 1
 }
 
 // layout
@@ -166,11 +181,21 @@ binds {
     Mod+A         { spawn "bash" "-c" "~/.config/niri/scripts/ai-panel.sh"; }
     Mod+Backslash { spawn "ghostty" "-e" "sh" "-c" "tuxedo ~/Documents/Misc/todo.txt"; }
     Mod+E         { spawn "ghostty" "-e" "superfile"; }
+    // Keep Ghostty open if SSH or the remote TUI exits, so errors stay visible.
+    Mod+Down { spawn "ghostty" "-e" "sh" "-c" "ssh -tt hermes@cyberport '/home/hermes/.local/bin/hermes --tui'; exec zsh"; }
+    Mod+Up   { spawn "ghostty" "-e" "herdr"; }
     Mod+F         { spawn "helium" "--ozone-platform=wayland"; }
     Mod+O         { spawn "obsidian"; }
     Mod+S         { spawn "ghostty" "-e" "spotify_player"; }
     Mod+Shift+Delete { spawn "swaylock-plugin" "--command-each" "windowtolayer ghostty -e lavat -g -c D8D8D8 -k FFFFFF -G"; }
     Alt+Space    repeat=false { spawn "vicinae" "toggle"; }
+
+    // dictation is handled by whisper-dict-daemon (evdev hold detection).
+    // hold Mod+D to record, release to transcribe. the daemon reads raw
+    // /dev/input events, so no niri bind is needed for the actual logic —
+    // this bind just consumes the key so it doesn't leak to the focused app.
+    // whisper-dict (toggle) is available as a manual fallback.
+    Mod+D          repeat=false { spawn "true"; }
 
     // noctalia shell
     Mod+P         { spawn-sh "noctalia-shell ipc call controlCenter toggle"; }
@@ -182,7 +207,7 @@ binds {
 
     // session
     Mod+Tab       repeat=false { toggle-overview; }
-    Mod+Shift+Escape { show-hotkey-overlay; }
+    Mod+Shift+Escape { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
 
     // window management
     Mod+W         { close-window; }

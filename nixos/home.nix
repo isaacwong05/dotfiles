@@ -23,12 +23,9 @@
         resumeCommand = "${pkgs.niri}/bin/niri msg action power-on-monitors";
       }
     ];
-    events = [
-      {
-        event = "before-sleep";
-        command = "swaylock-plugin --command-each 'windowtolayer ghostty -e lavat -g -c FFFFFF -G'";
-      }
-    ];
+    events = {
+      "before-sleep" = "swaylock-plugin --command-each 'windowtolayer ghostty -e lavat -g -c FFFFFF -G'";
+    };
   };
 
   gtk = {
