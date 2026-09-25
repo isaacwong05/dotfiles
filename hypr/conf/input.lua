@@ -1,4 +1,4 @@
--- Keyboard, pointer, touchpad, and gesture configuration.
+-- keyboard, pointer, touchpad, and gesture configuration.
 hl.config({
     input = {
         kb_layout = "us",

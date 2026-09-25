@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Preview one TerminalTextEffects animation at a time.
+# preview one terminaltexteffects animation at a time.
 set -u
 
 art="$HOME/.config/omarchy/branding/screensaver.txt"

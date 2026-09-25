@@ -6,8 +6,8 @@ out vec4 fragColor;
 // bar values. defaults to left channels first (low to high), then right (high to low).
 uniform float bars[512];
 
-uniform int bars_count;  // number of bars (left + right) (configurable)
-uniform int bar_width;   // bar width (configurable), not used here
+uniform int bars_count; // number of bars (left + right) (configurable)
+uniform int bar_width; // bar width (configurable), not used here
 uniform int bar_spacing; // space between bars (configurable)
 
 uniform vec3 u_resolution; // window resolution
@@ -21,7 +21,7 @@ uniform vec3 gradient_colors[8]; // gradient colors
 
 uniform float shader_time; // shader execution time s (not used here)
 
-uniform sampler2D inputTexture; // Texture from the last render pass (not used here)
+uniform sampler2D inputTexture; // texture from the last render pass (not used here)
 
 vec3 normalize_C(float y, vec3 col_1, vec3 col_2, float y_min, float y_max) {
     // create color based on fraction of this color and next color

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Super+S: summon Sonora. hyprscratch client silently no-ops if the daemon is
+# super+s: summon sonora. hyprscratch client silently no-ops if the daemon is
 # down (it should be started by startup.lua) — restart it before summoning.
 pgrep -x hyprscratch >/dev/null || (hyprscratch init & sleep 1)
 hyprscratch Sonora sonora special

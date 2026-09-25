@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Rotate the focused monitor 180 degrees; press the bind again to flip back.
+# rotate the focused monitor 180 degrees; press the bind again to flip back.
 # `--reload` preserves every non-zero transform across a config reload.
 set -euo pipefail
 
@@ -78,7 +78,7 @@ pending = b""
 while True:
     readable, _, _ = select.select([event_socket], [], [], 0.1)
     if not readable:
-        # ponytail: 10Hz polling is enough here; replace with monitor events only
+        # ponytail: 10hz polling is enough here; replace with monitor events only
         # if transform changes need sub-100ms reaction time.
         last = transforms()
         continue

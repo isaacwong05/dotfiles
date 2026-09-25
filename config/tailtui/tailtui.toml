@@ -1,4 +1,4 @@
-# Tuxedo Monochrome pastel palette for tailTUI.
+# tuxedo monochrome pastel palette for tailtui.
 mode = "dark"
 primary = "#d0d0d0"
 secondary = "#a8c8a8"

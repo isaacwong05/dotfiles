@@ -1,6 +1,6 @@
-# style name or JSON path (default "auto")
+# style name or json path (default "auto")
 style: "/home/isaac/.config/glow/mono.json"
-# mouse support (TUI-mode only)
+# mouse support (tui-mode only)
 mouse: false
 # use pager to display markdown
 pager: false

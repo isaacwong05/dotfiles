@@ -6,23 +6,21 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
 
-// QuickShell notification daemon + macOS-style Notification Center.
-//
-// Registers as org.freedesktop.Notifications (replacing Mako), renders frosted
-// banner cards in the top-right corner, and a Notification Center panel
-// (Super+N) with grouped history and clear-all.
-//
-// Hyprland blur for this shell is enabled in
+// quickshell notification daemon + macos-style notification center.
+// registers as org.freedesktop.notifications (replacing mako), renders frosted
+// banner cards in the top-right corner, and a notification center panel
+// (super+n) with grouped history and clear-all.
+// hyprland blur for this shell is enabled in
 // ~/.config/hypr/conf/window-rules.lua via the "notifications" layer
-// namespace (keep this PanelWindow namespace aligned with that rule).
+// namespace (keep this panelwindow namespace aligned with that rule).
 
 ShellRoot {
     id: root
 
     // ---- palette ----------------------------------------------------------
-    // Dark macOS notification material: near-black glass, bright type and one
-    // restrained hairline. The opaque-enough fill keeps text readable while
-    // Hyprland provides the wallpaper blur underneath.
+    // dark macos notification material: near-black glass, bright type and one
+    // restrained hairline. the opaque-enough fill keeps text readable while
+    // hyprland provides the wallpaper blur underneath.
     readonly property string uiFont: "SF Pro Text"
     readonly property color fgPrimary: "#ffffff"
     readonly property color fgSecondary: "#c5c5c5"
@@ -30,22 +28,22 @@ ShellRoot {
     readonly property color fgFaint: "#707078"
     readonly property color accent: "#f5f5f7"
     readonly property color danger: "#ff657a"
-    // Frosted material: Hyprland's notification layerrule blurs the wallpaper
+    // frosted material: hyprland's notification layerrule blurs the wallpaper
     // behind the card while the dark tint keeps text readable on light wallpapers.
     readonly property color glass: "#981b1b1f"
     readonly property color hairline: "#26ffffff"
     readonly property color hoverWash: "#1fffffff"
     readonly property string dashboardIconBase: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/"
 
-    // Noto Sans falls back to Noto Color Emoji through Fontconfig. The Apple
-    // logo is a private-use glyph and no installed Linux font provides it, so
+    // noto sans falls back to noto color emoji through fontconfig. the apple
+    // logo is a private-use glyph and no installed linux font provides it, so
     // use its readable name rather than rendering a missing-glyph square.
     function displayText(text) {
         return String(text || "").replace(/\uf8ff/g, "Apple")
     }
 
-    // Command notifications sometimes use the Herdr workspace path as their
-    // body (for example `~/1`). Show a useful completion message instead, and
+    // command notifications sometimes use the herdr workspace path as their
+    // body (for example `~/1`). show a useful completion message instead, and
     // keep real command output short enough for the card.
     function notificationDescription(notification) {
         if (!notification)
@@ -69,12 +67,12 @@ ShellRoot {
     property bool centerOpen: false
     property string centerTime: ""
     property string centerDate: ""
-    // id -> Notification. The tracked-notifications model only inserts objects
+    // id -> notification. the tracked-notifications model only inserts objects
     // on the next event-loop tick, so delegates resolve from this cache first.
     property var notifCache: ({})
     property var receivedAt: ({})
 
-    // All banners use the same five-second lifetime. Apps frequently request
+    // all banners use the same five-second lifetime. apps frequently request
     // long/persistent timeouts, which previously made the dot timer appear on
     // only a subset of notifications.
     function bannerTimeoutFor(notification) {
@@ -98,7 +96,7 @@ ShellRoot {
         id: bannerModel
     }
 
-    // ---- IPC control (Hyprland keybind -> echo ... > control file) ---------
+    // ---- ipc control (hyprland keybind -> echo ... > control file) ---------
     Process {
         id: controlProcess
         command: ["sh", "-c", "f=\"${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/quickshell-notifications/control\"; if [ -r \"$f\" ]; then cat \"$f\"; : > \"$f\"; fi"]
@@ -136,7 +134,7 @@ ShellRoot {
     }
 
     // ---- notification handling ---------------------------------------------
-    // Keep it alive: tracked notifications survive in the center until
+    // keep it alive: tracked notifications survive in the center until
     // dismissed, instead of being destroyed after this handler runs.
     function onNotification(notification) {
         if (!notification)
@@ -147,23 +145,23 @@ ShellRoot {
         if (root.receivedAt[notification.id] === undefined)
             root.receivedAt[notification.id] = Date.now()
 
-        // Purge any stale banner entry if the sender closes it on its own.
+        // purge any stale banner entry if the sender closes it on its own.
         notification.closed.connect(() => {
-            // Keep cached data through the exit animation; cleanup happens when
-            // finishBannerExit actually removes the ListModel row.
+            // keep cached data through the exit animation; cleanup happens when
+            // finishbannerexit actually removes the listmodel row.
             root.startBannerExit(notification.id)
         })
 
-        // Shown in the panel; a banner appears only when the center is closed.
+        // shown in the panel; a banner appears only when the center is closed.
         if (!root.centerOpen)
             root.pushBanner(notification)
     }
 
-    // The banner model holds only ids; the live object is resolved in the
-    // delegate. Storing Notification objects in ListModel rows crashes
-    // Quickshell 0.3.1 when rows are removed mid-render.
+    // the banner model holds only ids; the live object is resolved in the
+    // delegate. storing notification objects in listmodel rows crashes
+    // quickshell 0.3.1 when rows are removed mid-render.
     function pushBanner(notification) {
-        // A replacement is a data update, not a dismissal: remove the old row
+        // a replacement is a data update, not a dismissal: remove the old row
         // immediately so the replacement can animate in without a duplicate.
         root.dropBannerEntry(notification.id)
         bannerModel.insert(0, { nid: notification.id, leaving: false })
@@ -181,8 +179,8 @@ ShellRoot {
         }
     }
 
-    // Keep the model row alive through its exit animation. Removing it only in
-    // finishBannerExit gives the ListView room to animate the remaining cards.
+    // keep the model row alive through its exit animation. removing it only in
+    // finishbannerexit gives the listview room to animate the remaining cards.
     function startBannerExit(id) {
         for (let i = 0; i < bannerModel.count; i++) {
             const row = bannerModel.get(i)
@@ -206,7 +204,7 @@ ShellRoot {
         }
     }
 
-    // Banner auto-expired: hide it after its exit; transient notifications are
+    // banner auto-expired: hide it after its exit; transient notifications are
     // dismissed from the server at the same time but their row stays alive.
     function expireBanner(notification) {
         root.startBannerExit(notification.id)
@@ -214,7 +212,7 @@ ShellRoot {
             notification.dismiss()
     }
 
-    // X button or a click with no actions: fully dismiss.
+    // x button or a click with no actions: fully dismiss.
     function dismissNotification(notification) {
         if (!notification)
             return
@@ -222,7 +220,7 @@ ShellRoot {
         notification.dismiss()
     }
 
-    // Clicking a card/entry invokes the sender's default action, or closes
+    // clicking a card/entry invokes the sender's default action, or closes
     // the notification when there is none.
     function activate(notification) {
         if (!notification)
@@ -234,8 +232,8 @@ ShellRoot {
             notification.dismiss()
     }
 
-    // The standard card is sized around its 46 px icon; only optional controls
-    // add height. This keeps ordinary banners as compact as macOS alerts.
+    // the standard card is sized around its 46 px icon; only optional controls
+    // add height. this keeps ordinary banners as compact as macos alerts.
     function bannerExtraHeight(notification) {
         if (!notification)
             return 0
@@ -291,7 +289,7 @@ ShellRoot {
     }
 
     Timer {
-        // Live clock for the panel header.
+        // live clock for the panel header.
         interval: 1000
         running: true
         repeat: true
@@ -303,10 +301,8 @@ ShellRoot {
         }
     }
 
-    // ==========================================================================
-    // Banner strip (top-right)
-    // ==========================================================================
-    // WlrLayershell (not PanelWindow): PanelWindow has no namespace property and
+    // banner strip (top-right)
+    // wlrlayershell (not panelwindow): panelwindow has no namespace property and
     // would land in the default "quickshell" namespace, which window-rules.lua
     // explicitly excludes from blur.
     WlrLayershell {
@@ -323,9 +319,9 @@ ShellRoot {
             NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
         }
 
-        // ListView sizes itself via contentHeight; a Column+Repeater collapses
-        // because Repeater reports no implicit size. Entrance animation lives
-        // inside BannerCard, so no ListView transitions are needed.
+        // listview sizes itself via contentheight; a column+repeater collapses
+        // because repeater reports no implicit size. entrance animation lives
+        // inside bannercard, so no listview transitions are needed.
         ListView {
             id: bannerList
             anchors { top: parent.top; topMargin: 16; right: parent.right; rightMargin: 16 }
@@ -339,12 +335,12 @@ ShellRoot {
             displaced: Transition {
                 NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.OutCubic }
             }
-            // The wrapper reads `model` in the delegate context; inline
+            // the wrapper reads `model` in the delegate context; inline
             // components cannot see the delegate's context properties.
             delegate: Item {
                 id: bannerDelegate
                 width: bannerList.width
-                // Keep each delegate exactly as tall as its card. The old
+                // keep each delegate exactly as tall as its card. the old
                 // decorative sheets extended beneath this bound and overlapped
                 // the following delegate, producing the dark bottom overlay.
                 height: bannerCardItem.implicitHeight
@@ -356,7 +352,7 @@ ShellRoot {
                     width: parent.width
                     notification: root.findNotification(bannerDelegate.bannerNid)
 
-                    // Entrance: slide in from the right with a spring pop.
+                    // entrance: slide in from the right with a spring pop.
                     Component.onCompleted: startEntrance()
                 }
 
@@ -375,9 +371,7 @@ ShellRoot {
         }
     }
 
-    // ==========================================================================
-    // Notification Center panel (right edge, Super+N)
-    // ==========================================================================
+    // notification center panel (right edge, super+n)
     WlrLayershell {
         namespace: "notifications"
         layer: WlrLayer.Overlay
@@ -394,7 +388,7 @@ ShellRoot {
             Keys.onEscapePressed: root.closeCenter()
             Component.onCompleted: forceActiveFocus()
 
-            // Clicking the transparent strip left of the panel closes it.
+            // clicking the transparent strip left of the panel closes it.
             MouseArea {
                 anchors { top: parent.top; bottom: parent.bottom; left: parent.left }
                 width: 10
@@ -476,8 +470,8 @@ ShellRoot {
                     anchors { top: parent.top; topMargin: 116; bottom: parent.bottom; bottomMargin: 14; left: parent.left; leftMargin: 12; right: parent.right; rightMargin: 12 }
                     spacing: 10
                     clip: true
-                    // The tracked-notifications ObjectModel is the supported
-                    // reactive source; its single role is modelData.
+                    // the tracked-notifications objectmodel is the supported
+                    // reactive source; its single role is modeldata.
                     model: server.trackedNotifications
 
                     add: Transition {
@@ -602,11 +596,9 @@ ShellRoot {
         }
     }
 
-    // ==========================================================================
-    // Components
-    // ==========================================================================
+    // components
 
-    // App icon: Dashboard Icons -> notification image/theme icon -> initial avatar.
+    // app icon: dashboard icons -> notification image/theme icon -> initial avatar.
     component AppIcon: Item {
         id: iconBox
         required property var notification
@@ -627,18 +619,18 @@ ShellRoot {
             const image = String(iconBox.notification.image || "")
             const appIcon = String(iconBox.notification.appIcon || "")
             const desktopEntry = String(iconBox.notification.desktopEntry || "")
-            // Notification image hints are direct data/URLs or local paths.
+            // notification image hints are direct data/urls or local paths.
             if (image.startsWith("data:") || image.startsWith("file:") || image.startsWith("qrc:"))
                 return image
             if (image.startsWith("/"))
                 return "file://" + image
-            // notify-send -i <absolute path> arrives as appIcon, not image.
+            // notify-send -i <absolute path> arrives as appicon, not image.
             if (appIcon.startsWith("file:") || appIcon.startsWith("qrc:"))
                 return appIcon
             if (appIcon.startsWith("/"))
                 return "file://" + appIcon
 
-            // Fall back to the installed icon theme when Dashboard Icons has
+            // fall back to the installed icon theme when dashboard icons has
             // no matching logo or the network is unavailable.
             const candidates = [
                 appIcon,
@@ -702,14 +694,14 @@ ShellRoot {
             const summary = String(iconBox.notification.summary || "").toLowerCase()
             const body = String(iconBox.notification.body || "").toLowerCase()
             const name = iconBox.name.toLowerCase()
-            // Pi currently arrives through notify-send, so identify it from
+            // pi currently arrives through notify-send, so identify it from
             // the notification content instead of branding every notify-send
-            // message as Pi.
+            // message as pi.
             if (name === "pi" || name === "pi-mono"
                     || (name === "notify-send" && (summary.startsWith("pi ") || body.includes(".pi"))))
                 addDashboardSlug(slugs, "pi-coding-agent")
 
-            // Sender-provided identifiers are more reliable than display names.
+            // sender-provided identifiers are more reliable than display names.
             addDashboardSlug(slugs, iconBox.notification.appIcon)
             addDashboardSlug(slugs, iconBox.notification.desktopEntry)
             addDashboardSlug(slugs, iconBox.name)
@@ -755,7 +747,7 @@ ShellRoot {
             fillMode: Image.PreserveAspectFit
             antialiasing: true
             asynchronous: true
-            // An empty/Error/Loading source never paints; the avatar remains.
+            // an empty/error/loading source never paints; the avatar remains.
             visible: iconSource !== "" && status === Image.Ready
         }
 
@@ -770,7 +762,7 @@ ShellRoot {
         }
     }
 
-    // Banner card: frosted glass, icon, title/body, hover close, optional
+    // banner card: frosted glass, icon, title/body, hover close, optional
     // actions, inline reply, and progress rendering.
     component BannerCard: Rectangle {
         id: bannerCard
@@ -784,7 +776,7 @@ ShellRoot {
         border.width: 1
         border.color: bannerCard.critical ? "#80ff657a" : root.hairline
 
-        // Two text rows plus 12 px vertical padding need 68 px; the previous
+        // two text rows plus 12 px vertical padding need 68 px; the previous
         // 64 px floor let dense banners visually collide with the next card.
         implicitHeight: Math.max(58 + root.bannerExtraHeight(bannerCard.notification), 68)
         opacity: 0
@@ -793,13 +785,13 @@ ShellRoot {
 
         readonly property real cardPadding: 12
 
-        // Lifespan of this banner in ms; 0 = persistent (critical or
-        // sender-requested). Shared by the dismiss timer and the countdown
+        // lifespan of this banner in ms; 0 = persistent (critical or
+        // sender-requested). shared by the dismiss timer and the countdown
         // frame so both stay in sync.
         readonly property real lifespan: root.bannerTimeoutFor(bannerCard.notification)
 
-        // One shared clock drives both the dot matrix and automatic close.
-        // Pausing this animation on hover pauses the close timeout too.
+        // one shared clock drives both the dot matrix and automatic close.
+        // pausing this animation on hover pauses the close timeout too.
         property real remaining: 1
         onRemainingChanged: {
             if (remaining <= 0)
@@ -814,7 +806,7 @@ ShellRoot {
             easing.type: Easing.Linear
         }
 
-        // Slide in from the right with a spring pop, macOS-style.
+        // slide in from the right with a spring pop, macos-style.
         function startEntrance() {
             entrance.restart()
         }
@@ -828,7 +820,7 @@ ShellRoot {
             PauseAnimation { duration: 80 }
         }
 
-        // Draining countdown border: the hairline recedes clockwise as the
+        // draining countdown border: the hairline recedes clockwise as the
         // auto-dismiss countdown runs (paused while hovered, like the timer).
         Canvas {
             id: countdownFrame
@@ -859,7 +851,7 @@ ShellRoot {
                 ctx.arcTo(o, o, o + rad, o, rad)
                 ctx.lineTo(o + w / 2, o)
                 ctx.lineWidth = sw
-                // Keep the countdown subordinate to the 1 px hairline rather
+                // keep the countdown subordinate to the 1 px hairline rather
                 // than turning the entire card into a bright outline.
                 ctx.strokeStyle = Qt.rgba(1, 1, 1, 0.15)
                 ctx.lineCap = "butt"
@@ -885,7 +877,7 @@ ShellRoot {
         RowLayout {
             id: contentRow
             anchors.fill: parent
-            // Keep the timestamp close to the card edge; the dismiss control
+            // keep the timestamp close to the card edge; the dismiss control
             // only appears on hover and overlays this small reserved gutter.
             anchors { leftMargin: bannerCard.cardPadding; rightMargin: bannerCard.cardPadding + 8; topMargin: bannerCard.cardPadding; bottomMargin: bannerCard.cardPadding }
             spacing: 11
@@ -903,11 +895,11 @@ ShellRoot {
                 Layout.alignment: Qt.AlignTop
                 spacing: 4
 
-                // A common baseline keeps the smaller timestamp optically
+                // a common baseline keeps the smaller timestamp optically
                 // aligned with the sender/title, not merely centered beside it.
                 Item {
                     Layout.fillWidth: true
-                    // Make room for the five-dot countdown below the time.
+                    // make room for the five-dot countdown below the time.
                     Layout.preferredHeight: Math.max(titleLabel.implicitHeight, timestampLabel.implicitHeight + 6)
 
                     Text {
@@ -932,7 +924,7 @@ ShellRoot {
                         font.weight: Font.Medium
                     }
 
-                    // Small dot-matrix timer: it drains over the automatic
+                    // small dot-matrix timer: it drains over the automatic
                     // lifetime and pauses while the card is hovered.
                     Row {
                         anchors { right: parent.right; top: timestampLabel.bottom; topMargin: 2 }
@@ -947,7 +939,7 @@ ShellRoot {
                                 height: 2
                                 radius: 1
                                 color: root.fgMuted
-                                // Five visible steps: one dot goes dim each
+                                // five visible steps: one dot goes dim each
                                 // second for the default five-second timeout.
                                 opacity: index < Math.ceil(bannerCard.remaining * 5) ? 0.9 : 0.18
                                 Behavior on opacity { NumberAnimation { duration: 160 } }
@@ -1011,7 +1003,7 @@ ShellRoot {
             spacing: 4
             visible: bannerCard.notification.actions.length > 0 || bannerCard.notification.hasInlineReply || (bannerCard.notification.hints && typeof bannerCard.notification.hints["value"] === "number")
 
-            // Optional progress (hints: value/maximumValue, e.g. downloads).
+            // optional progress (hints: value/maximumvalue, e.g. downloads).
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 4
@@ -1030,7 +1022,7 @@ ShellRoot {
                 }
             }
 
-            // Action buttons, e.g. "Reply" / "Mark as read".
+            // action buttons, e.g. "reply" / "mark as read".
             RowLayout {
                 Layout.fillWidth: true
                 visible: bannerCard.notification.actions.length > 0
@@ -1072,7 +1064,7 @@ ShellRoot {
                 }
             }
 
-            // Inline reply (quick reply).
+            // inline reply (quick reply).
             RowLayout {
                 Layout.fillWidth: true
                 visible: bannerCard.notification.hasInlineReply
@@ -1100,7 +1092,7 @@ ShellRoot {
                         Keys.onEnterPressed: sendReply()
                     }
 
-                    // Placeholder: TextInput has no stylable placeholder color here.
+                    // placeholder: textinput has no stylable placeholder color here.
                     Text {
                         anchors.fill: replyField
                         anchors { leftMargin: 10; rightMargin: 10 }

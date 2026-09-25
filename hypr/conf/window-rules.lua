@@ -1,5 +1,5 @@
--- Per-window and layer-surface behavior rules.
--- Keep generic Quickshell overlays crisp. The voice indicator is intentionally
+-- per-window and layer-surface behavior rules.
+-- keep generic quickshell overlays crisp. the voice indicator is intentionally
 -- just a small card; blurring its full-width layer surface dims the entire top
 -- of the active monitor.
 hl.layer_rule({
@@ -8,7 +8,7 @@ hl.layer_rule({
     blur = false,
 })
 
--- Walker is a translucent overlay surface; let Hyprland blur the desktop
+-- walker is a translucent overlay surface; let hyprland blur the desktop
 -- behind it while retaining its sharp monochrome content.
 hl.layer_rule({
     name = "blur-walker",
@@ -17,7 +17,7 @@ hl.layer_rule({
     xray = false,
 })
 
--- Native Hyprland blur for the Quickshell notification layer. The Lua API
+-- native hyprland blur for the quickshell notification layer. the lua api
 -- emits the current `layerrule = blur, match:namespace ...` syntax and the
 -- alpha threshold keeps the tinted cards in the blur pass.
 hl.layer_rule({
@@ -28,7 +28,7 @@ hl.layer_rule({
     xray = false,
 })
 
--- Make Vesktop itself translucent so CSS glass can reveal Hyprland's blurred backdrop.
+-- make vesktop itself translucent so css glass can reveal hyprland's blurred backdrop.
 hl.window_rule({
     name = "vesktop-glass",
     match = { class = "^vesktop$" },

@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 
-// Standalone power menu. It is launched on demand by Hyprland, not autostarted.
+// standalone power menu. it is launched on demand by hyprland, not autostarted.
 ShellRoot {
     PanelWindow {
         id: panel
@@ -90,7 +90,7 @@ ShellRoot {
         radius: 11
         color: mouse.containsMouse ? "#30ffffff" : "transparent"
 
-        // Fixed slots make every icon and label share the same baseline,
+        // fixed slots make every icon and label share the same baseline,
         // regardless of the glyph's font metrics.
         Item {
             anchors.centerIn: parent

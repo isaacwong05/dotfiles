@@ -1,3 +1,3 @@
-# ROG GA503RW battery longevity cap: stop charging at 80%.
-# Replays on every power_supply add/change event (boot, plug-unplug).
+# rog ga503rw battery longevity cap: stop charging at 80%.
+# replays on every power_supply add/change event (boot, plug-unplug).
 ACTION=="add|change", SUBSYSTEM=="power_supply", ATTR{type}=="Battery", ATTR{charge_control_end_threshold}="80"

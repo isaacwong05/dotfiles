@@ -1,62 +1,62 @@
-# CLAUDE.md
+# claude.md
 
-This file provides guidance to coding agents working in this repository.
+this file provides guidance to coding agents working in this repository.
 
-## What this repo is
+## what this repo is
 
-Personal dotfiles for an Arch Linux laptop running Hyprland on Wayland. The
-active Hyprland configuration is Lua-based and lives in `hypr/`; most app
+personal dotfiles for an arch linux laptop running hyprland on wayland. the
+active hyprland configuration is lua-based and lives in `hypr/`; most app
 configs are symlinked from this repository into `~/.config`.
 
-Do not add NixOS, Niri, or Noctalia configuration here. They are no longer
+do not add nixos, niri, or noctalia configuration here. they are no longer
 part of the active setup.
 
-## Applying changes
+## applying changes
 
 ```bash
-# Reload the active compositor configuration
+# reload the active compositor configuration
 hyprctl reload
 
-# Reload changed user units
+# reload changed user units
 systemctl --user daemon-reload
 systemctl --user restart notifications.service
 ```
 
-The repository is at `~/dotfiles`. Changes to symlinked configs are live
+the repository is at `~/dotfiles`. changes to symlinked configs are live
 immediately; restart the relevant application or user service when needed.
 
-## Repository structure
+## repository structure
 
 | path | what it is |
 | --- | --- |
-| `hypr/` | Hyprland Lua config, monitor layout, keybinds, rules, and scripts |
-| `quickshell/` | Power menu, notifications, and idle screensaver QML |
-| `config/systemd/user/` | User units maintained by this repository |
-| `ghostty/` | Ghostty terminal config |
-| `nvim/` | Neovim/LazyVim config |
-| `config/` | Portable application configs |
-| `scripts/` | Arch maintenance, snapshots, screenshots, and helper scripts |
-| `.zshrc` | Zsh, zinit, Starship, zoxide, and local aliases |
-| `etc-staging/` | Files intended for `/etc`, copied manually with care |
+| `hypr/` | hyprland lua config, monitor layout, keybinds, rules, and scripts |
+| `quickshell/` | power menu, notifications, and idle screensaver qml |
+| `config/systemd/user/` | user units maintained by this repository |
+| `ghostty/` | ghostty terminal config |
+| `nvim/` | neovim/lazyvim config |
+| `config/` | portable application configs |
+| `scripts/` | arch maintenance, snapshots, screenshots, and helper scripts |
+| `.zshrc` | zsh, zinit, starship, zoxide, and local aliases |
+| `etc-staging/` | files intended for `/etc`, copied manually with care |
 
-Tide Island is installed as an Arch package and runs from
+tide island is installed as an arch package and runs from
 `/usr/share/tide-island`; its old vendored source is not part of this repo.
 
-## Active desktop stack
+## active desktop stack
 
-- Arch Linux
-- Hyprland + `hyprmoncfg`
-- Quickshell notifications and power menu
-- Tide Island
-- Walker and Elephant for launching/search
-- Ghostty
-- Neovim/LazyVim
-- Zsh + Starship + zinit
-- PipeWire/WirePlumber
-- Omarchy/lavat screensaver scripts
-- Dusky STT user service
+- arch linux
+- hyprland + `hyprmoncfg`
+- quickshell notifications and power menu
+- tide island
+- walker and elephant for launching/search
+- ghostty
+- neovim/lazyvim
+- zsh + starship + zinit
+- pipewire/wireplumber
+- omarchy/lavat screensaver scripts
+- dusky stt user service
 
-## Useful checks
+## useful checks
 
 ```bash
 systemctl --user --failed
@@ -65,4 +65,4 @@ hyprctl monitors
 hyprctl clients
 ```
 
-Keep secrets, runtime state, logs, caches, and generated files out of commits.
+keep secrets, runtime state, logs, caches, and generated files out of commits.

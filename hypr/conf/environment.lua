@@ -1,8 +1,8 @@
--- Session environment and application commands.
+-- session environment and application commands.
 terminal = "ghostty"
 fileManager = "ghostty -e spf"
--- Cairo renderer: NVIDIA GL context creation adds ~270ms to every walker open
--- (client is a fresh GTK4 process each time). The launcher UI is static, so GL gains nothing.
+-- cairo renderer: nvidia gl context creation adds ~270ms to every walker open
+-- (client is a fresh gtk4 process each time). the launcher ui is static, so gl gains nothing.
 menu = "GSK_RENDERER=cairo walker"
 
 hl.env("LIBVA_DRIVER_NAME", "nvidia")

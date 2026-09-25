@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2026 rezky_nightky <with.rezky@gmail.com>
+// spdx-license-identifier: mit
+// spdx-filecopyrighttext: 2026 rezky_nightky <with.rezky@gmail.com>
 
-// Rotate Orion
+// rotate orion
 
 #version 330
 
@@ -63,7 +63,7 @@ void main() {
         return;
     }
 
-    // Note: rotation is achieved by phase-shifting bar sampling, not by rotating geometry.
+    // note: rotation is achieved by phase-shifting bar sampling, not by rotating geometry.
     float rotate_speed = 0.10;
     float t = fract(shader_time * 0.1);
     float phase = fract(t * (rotate_speed / 0.1));

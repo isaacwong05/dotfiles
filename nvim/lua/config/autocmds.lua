@@ -1,1 +1,1 @@
--- additional autocmds (LazyVim defaults: lazyvim.config.autocmds)
+-- additional autocmds (lazyvim defaults: lazyvim.config.autocmds)

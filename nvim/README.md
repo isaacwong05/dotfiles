@@ -1,4 +1,4 @@
-# 💤 LazyVim
+# neovim
 
-A starter template for [LazyVim](https://github.com/LazyVim/LazyVim).
-Refer to the [documentation](https://lazyvim.github.io/installation) to get started.
+this is my [lazyvim](https://github.com/LazyVim/LazyVim) configuration. custom
+plugins and settings live under `lua/`, with the monochrome theme in `colors/`.

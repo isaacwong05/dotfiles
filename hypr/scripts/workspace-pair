@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Treat two Hyprland workspaces as one desktop: one per physical monitor.
-# Workspaces 1–10 belong to eDP-1; 11–20 are their HDMI-A-1 counterparts.
-# The pairing only exists while HDMI-A-1 is attached; on a single monitor a
+# treat two hyprland workspaces as one desktop: one per physical monitor.
+# workspaces 1–10 belong to edp-1; 11–20 are their hdmi-a-1 counterparts.
+# the pairing only exists while hdmi-a-1 is attached; on a single monitor a
 # switch/move is the plain workspace operation.
-# Usage: workspace-pair switch <1-10> | move <1-10>
+# usage: workspace-pair switch <1-10> | move <1-10>
 set -euo pipefail
 
 mode=${1:?usage: workspace-pair switch|move <1-10>}
@@ -22,8 +22,8 @@ has_external() {
     hyprctl monitors -j | grep -q '"name": "'"$secondary_monitor"'"'
 }
 
-# Hyprland's Lua configuration mode exposes its dispatchers through hl.dsp,
-# so invoke the API directly rather than legacy textual dispatch commands.
+# hyprland's lua configuration mode exposes its dispatchers through hl.dsp,
+# so invoke the api directly rather than legacy textual dispatch commands.
 lua() {
     hyprctl eval "hl.dispatch($1)" >/dev/null
 }
@@ -31,7 +31,7 @@ lua() {
 case "$mode" in
     switch)
         if has_external; then
-            # Select each half of the paired workspace, then restore focus to
+            # select each half of the paired workspace, then restore focus to
             # the monitor on which the shortcut was invoked.
             side_number=$((number + 10))
             lua "hl.dsp.focus({ monitor = \"$main_monitor\" })"

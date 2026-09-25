@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture a selected Wayland region to the clipboard and confirm via mako.
+# capture a selected wayland region to the clipboard and confirm via mako.
 set -euo pipefail
 
 if grim -g "$(slurp)" - | wl-copy --type image/png; then

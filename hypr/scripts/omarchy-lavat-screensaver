@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run lavat on the laptop display and dismiss the other screensaver with it.
+# run lavat on the laptop display and dismiss the other screensaver with it.
 set -u
 
 cleanup() {
@@ -7,5 +7,5 @@ cleanup() {
 }
 trap cleanup INT TERM HUP QUIT EXIT
 
-# q, Escape, or Ctrl-C exits lavat; cleanup then closes the HDMI screensaver.
+# q, escape, or ctrl-c exits lavat; cleanup then closes the hdmi screensaver.
 lavat -g -c FFFFFF -k 000000 -G -C

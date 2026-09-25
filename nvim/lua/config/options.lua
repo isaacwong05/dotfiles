@@ -1,1 +1,1 @@
--- additional options (LazyVim defaults: lazyvim.config.options)
+-- additional options (lazyvim defaults: lazyvim.config.options)

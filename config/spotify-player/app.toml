@@ -1,6 +1,6 @@
 theme = "dracula"
-# custom client removed: dev-mode apps lose fields + endpoints (README: bundled default is
-# ncspot's extended-quota id, full features). Fallback if bundled id hits a 429 storm:
+# custom client removed: dev-mode apps lose fields + endpoints (readme: bundled default is
+# ncspot's extended-quota id, full features). fallback if bundled id hits a 429 storm:
 # re-add client_id/client_secret below and re-auth.
 # client_id = "6eecb037adf944d48f295e59fcff439e"
 # client_secret = "7a7eb5999a4b4044a831de8a5ebe2de8"

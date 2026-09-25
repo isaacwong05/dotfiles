@@ -2,7 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 
-// Native Wayland idle monitoring without adding another daemon.
+// native wayland idle monitoring without adding another daemon.
 ShellRoot {
     id: root
     property bool launchPending: false

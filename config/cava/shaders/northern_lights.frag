@@ -6,11 +6,11 @@ out vec4 fragColor;
 // bar values. defaults to left channels first (low to high), then right (high to low).
 uniform float bars[512];
 
-uniform int bars_count;    // number of bars (left + right) (configurable)
+uniform int bars_count; // number of bars (left + right) (configurable)
 
 uniform vec3 u_resolution; // window resolution, not used here
 
-//colors, configurable in cava config file
+// colors, configurable in cava config file
 uniform vec3 bg_color; // background color(r,g,b) (0.0 - 1.0), not used here
 uniform vec3 fg_color; // foreground color, not used here
 

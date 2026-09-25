@@ -1,9 +1,9 @@
--- A numbered desktop is a pair of workspaces: IDs 1–10 on eDP-1 and their
--- 11–20 counterparts on HDMI-A-1. The paired-workspace script switches both
+-- a numbered desktop is a pair of workspaces: ids 1–10 on edp-1 and their
+-- 11–20 counterparts on hdmi-a-1. the paired-workspace script switches both
 -- displays together and moves a window to its matching monitor workspace.
--- The HDMI half only exists while an external monitor is actually attached:
+-- the hdmi half only exists while an external monitor is actually attached:
 -- binding persistent workspaces 11–20 to a dead output lets them leak onto
--- eDP-1 (they showed up as the active workspace after an unplug).
+-- edp-1 (they showed up as the active workspace after an unplug).
 local external = false
 for _, m in ipairs(hl.get_monitors()) do
     if m.name == "HDMI-A-1" then
@@ -20,7 +20,7 @@ for i = 1, 10 do
     end
 end
 
--- Re-evaluate the gate when the external comes or goes: workspace rules only
+-- re-evaluate the gate when the external comes or goes: workspace rules only
 -- apply at config source time, so a hotplug mid-session needs a reload.
 hl.on("monitor.added", function() hl.dsp.exec_cmd("hyprctl reload") end)
 hl.on("monitor.removed", function() hl.dsp.exec_cmd("hyprctl reload") end)

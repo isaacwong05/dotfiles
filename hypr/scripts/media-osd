@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Apply a media change, then publish it for the Quickshell media OSD.
+# apply a media change, then publish it for the quickshell media osd.
 set -euo pipefail
 
 runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/media-osd"
@@ -43,5 +43,5 @@ else
   muted=0
 fi
 
-# nanoseconds ensure repeated identical key presses still refresh the OSD.
+# nanoseconds ensure repeated identical key presses still refresh the osd.
 printf '%s\t%s\t%s\t%s\n' "$kind" "$value" "$muted" "$(date +%s%N)" > "$state_file"

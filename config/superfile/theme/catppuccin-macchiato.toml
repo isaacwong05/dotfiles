@@ -1,67 +1,66 @@
-# Catppuccin Macchiato Flavor
-# Theme create by: https://github.com/GV14982
-# Update by(sort by time):
-#
-# Thanks for all contributor!!
+# catppuccin macchiato flavor
+# theme create by: https://github.com/GV14982
+# update by(sort by time):
+# thanks for all contributor!!
 
-# If you want to make sidebar border display just set it same as sidebar background color
+# if you want to make sidebar border display just set it same as sidebar background color
 
-# Code syntax highlight theme (you can go to https://github.com/alecthomas/chroma/blob/master/styles to find one you like)
+# code syntax highlight theme (you can go to https://github.com/alecthomas/chroma/blob/master/styles to find one you like)
 code_syntax_highlight = "catppuccin-macchiato"
 
-# ========= Border =========
-file_panel_border = "#6e738d" # Overlay0
-sidebar_border = "#24273a"    # Base
-footer_border = "#6e738d"     # Overlay0
+# ========= border =========
+file_panel_border = "#6e738d" # overlay0
+sidebar_border = "#24273a" # base
+footer_border = "#6e738d" # overlay0
 
-# ========= Border Active =========
-file_panel_border_active = "#b7bdf8" # Lavendar
-sidebar_border_active = "#ed8796"    # Red
-footer_border_active = "#a6da95"     # Green
-modal_border_active = "#939ab7"      # Overlay2
+# ========= border active =========
+file_panel_border_active = "#b7bdf8" # lavendar
+sidebar_border_active = "#ed8796" # red
+footer_border_active = "#a6da95" # green
+modal_border_active = "#939ab7" # overlay2
 
-# ========= Background (bg) =========
-full_screen_bg = "#24273a" # Base
-file_panel_bg = "#24273a"  # Base
-sidebar_bg = "#24273a"     # Base
-footer_bg = "#24273a"      # Base
-modal_bg = "#24273a"       # Base
+# ========= background (bg) =========
+full_screen_bg = "#24273a" # base
+file_panel_bg = "#24273a" # base
+sidebar_bg = "#24273a" # base
+footer_bg = "#24273a" # base
+modal_bg = "#24273a" # base
 
-# ========= Foreground (fg) =========
-full_screen_fg = "#a5adcb" # Subtext0
-file_panel_fg = "#a5adcb"  # Subtext0
-sidebar_fg = "#a5adcb"     # Subtext0
-footer_fg = "#a5adcb"      # Subtext0
-modal_fg = "#a5adcb"       # Subtext0
+# ========= foreground (fg) =========
+full_screen_fg = "#a5adcb" # subtext0
+file_panel_fg = "#a5adcb" # subtext0
+sidebar_fg = "#a5adcb" # subtext0
+footer_fg = "#a5adcb" # subtext0
+modal_fg = "#a5adcb" # subtext0
 
-# ========= Special Color =========
-cursor = "#f4dbd6"  # Rosewater
-correct = "#a6da95" # Green
-error = "#ed8796"   # Red
-hint = "#7dc4e4"    # Sapphire
-cancel = "#ee99a0"  # Maroon
-# Gradient color can only have two color!
-gradient_color = ["#8aadf4", "#c6a0f6"] # [Blue, Mauve]
+# ========= special color =========
+cursor = "#f4dbd6" # rosewater
+correct = "#a6da95" # green
+error = "#ed8796" # red
+hint = "#7dc4e4" # sapphire
+cancel = "#ee99a0" # maroon
+# gradient color can only have two color!
+gradient_color = ["#8aadf4", "#c6a0f6"] # [blue, mauve]
 
-# ========= File Panel Special Items =========
-file_panel_top_directory_icon = "#a6da95" # Green
-file_panel_top_path = "#8aadf4"           # Blue
-file_panel_item_selected_fg = "#91d7e3"   # Sky
-file_panel_item_selected_bg = "#24273a"   # Base
+# ========= file panel special items =========
+file_panel_top_directory_icon = "#a6da95" # green
+file_panel_top_path = "#8aadf4" # blue
+file_panel_item_selected_fg = "#91d7e3" # sky
+file_panel_item_selected_bg = "#24273a" # base
 
-# ========= Sidebar Special Items =========
-sidebar_title = "#7dc4e4"            # Sapphire
-sidebar_item_selected_fg = "#91d7e3" # Sky
-sidebar_item_selected_bg = "#24273a" # Base
-sidebar_divider = "#939ab7"          # Overlay2
+# ========= sidebar special items =========
+sidebar_title = "#7dc4e4" # sapphire
+sidebar_item_selected_fg = "#91d7e3" # sky
+sidebar_item_selected_bg = "#24273a" # base
+sidebar_divider = "#939ab7" # overlay2
 
-# ========= Modal Special Items =========
-modal_cancel_fg = "#363a4f" # Surface0
-modal_cancel_bg = "#ee99a0" # Maroon
+# ========= modal special items =========
+modal_cancel_fg = "#363a4f" # surface0
+modal_cancel_bg = "#ee99a0" # maroon
 
-modal_confirm_fg = "#363a4f" # Surface0
-modal_confirm_bg = "#91d7e3" # Sky
+modal_confirm_fg = "#363a4f" # surface0
+modal_confirm_bg = "#91d7e3" # sky
 
-# ========= Help Menu =========
-help_menu_hotkey = "#91d7e3" # Sky
-help_menu_title = "#ee99a0"  # Maroon
+# ========= help menu =========
+help_menu_hotkey = "#91d7e3" # sky
+help_menu_title = "#ee99a0" # maroon

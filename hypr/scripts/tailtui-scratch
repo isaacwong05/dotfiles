@@ -1,4 +1,4 @@
 #!/bin/sh
-# Super+T: summon tailTUI as a floating scratchpad.
+# super+t: summon tailtui as a floating scratchpad.
 pgrep -x hyprscratch >/dev/null || (hyprscratch init & sleep 1)
 hyprscratch io.github.phundahl.tailtui /home/isaac/.config/hypr/scripts/tailtui-launch special

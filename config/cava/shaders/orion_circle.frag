@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2026 rezky_nightky <with.rezky@gmail.com>
+// spdx-license-identifier: mit
+// spdx-filecopyrighttext: 2026 rezky_nightky <with.rezky@gmail.com>
 
-// Static Orion (non-rotating)
+// static orion (non-rotating)
 
 #version 330
 

@@ -1,4 +1,4 @@
--- Minimal monochrome appearance, blur, and fast non-sliding animations.
+-- minimal monochrome appearance, blur, and fast non-sliding animations.
 hl.config({
 	general = {
 		gaps_in = 0,
@@ -39,7 +39,7 @@ hl.config({
 		force_default_wallpaper = 0,
 		disable_hyprland_logo = true,
 	},
-	-- H/L focus moves between windows; hit the screen edge → hop monitors.
+	-- h/l focus moves between windows; hit the screen edge → hop monitors.
 	binds = {
 		window_direction_monitor_fallback = true,
 	},
@@ -53,7 +53,7 @@ hl.animation({ leaf = "border", enabled = true, speed = 8, bezier = "default" })
 hl.animation({ leaf = "borderangle", enabled = true, speed = 6, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "defaultBezier" })
 
--- Scratchpad (special workspace): slide up from the bottom, ease in/out.
+-- scratchpad (special workspace): slide up from the bottom, ease in/out.
 hl.curve("scratchpadBezier", { type = "bezier", points = { { 0.25, 0.1 }, { 0.25, 1 } } })
 hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 2, bezier = "scratchpadBezier", style = "slidevert" })
 

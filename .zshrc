@@ -9,6 +9,7 @@ alias orb="$HOME/dotfiles/scripts/orb"
 alias af='anifetch "$HOME/.config/fastfetch/orb.mp4" -W 50 -H 25 -r 15 -pr 15 -ca "--symbols braille --colors 2 --bg #0f0f0f --preprocess off --dither none --fg-only" -c "$HOME/.config/fastfetch/anifetch.jsonc" --center --no-input-restore'
 alias nt='wlctl'
 alias md='glow'
+alias lg='lazygit'
 alias testnet='curl -4 -IsS --max-time 10 https://example.com | head'
 alias spt='spotify_player'
 alias zconf='nvim ~/.zshrc'
@@ -16,11 +17,11 @@ alias reload='source ~/.zshrc'
 alias wtf='tldr'
 alias lc='z $(find * -type d | fzf)'
 
-# Tailscale
+# tailscale
 export TAILTUI_THEME="$HOME/.config/tailtui/tailtui.toml"
 alias tsui='tailtui'
 
-# Arch maintenance TUI
+# arch maintenance tui
 alias maint='arch-maintenance-tui'
 
 # zinit
@@ -44,8 +45,8 @@ zinit light zsh-users/zsh-history-substring-search
 zinit ice lucid
 zinit light hlissner/zsh-autopair
 
-# Keep suggestions synchronous: they must register ZLE widgets in every shell,
-# including a freshly opened terminal.  The muted gray matches the monochrome UI.
+# keep suggestions synchronous: they must register zle widgets in every shell,
+# including a freshly opened terminal. the muted gray matches the monochrome ui.
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 zinit ice lucid
@@ -102,7 +103,7 @@ export PATH=$PATH:~/.cargo/bin
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
 source /home/isaac/.local/share/leaf/completions/_leaf
 
-# Atuin history and shell hooks
+# atuin history and shell hooks
 if (( $+commands[atuin] )); then
   eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
   bindkey -M emacs '^h' atuin-search

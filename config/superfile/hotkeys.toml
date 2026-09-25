@@ -1,20 +1,18 @@
 ##############################################
-#                                            #
-#         Superfile vim-like Hotkeys         #
-#                                            #
+# superfile vim-like hotkeys #
 ##############################################
 
 #-- Maintainer: nonepork <https://github.com/nonepork>
 
-# This contains a hotkey config file for superfile, that's themed around vim
-# controls! More details can be found at
+# this contains a hotkey config file for superfile, that's themed around vim
+# controls! more details can be found at
 # https://superfile.dev/configure/custom-hotkeys/.
 
 ###############################################################################
-#                                Global hotkeys                               #
+# global hotkeys #
 ###############################################################################
 
-# Note: These hotkeys should be unique.
+# note: these hotkeys should be unique.
 
 #-- Basic Actions
 confirm = ['enter', '']
@@ -74,19 +72,19 @@ copy_present_working_directory = ['c', '']
 toggle_footer = ['ctrl+f', '']
 
 ###############################################################################
-#                                Typing hotkeys                               #
+# typing hotkeys #
 ###############################################################################
 
-# Note: These hotkeys can override all hotkeys.
+# note: these hotkeys can override all hotkeys.
 
 confirm_typing = ['enter', '']
 cancel_typing = ['esc', '']
 
 ###############################################################################
-#                            Mode-Specific Hotkeys                            #
+# mode-specific hotkeys #
 ###############################################################################
 
-# Note: These hotkeys can conflict with other modes, but not with global
+# note: these hotkeys can conflict with other modes, but not with global
 # hotkeys.
 
 #-- Normal Mode Actions

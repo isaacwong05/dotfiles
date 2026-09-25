@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Local adapter for the cloned Omarchy renderer.
-# The renderer intentionally kills every screensaver window when any one exits,
+# local adapter for the cloned omarchy renderer.
+# the renderer intentionally kills every screensaver window when any one exits,
 # so multiple monitors dismiss together.
 set -u
 
@@ -32,7 +32,7 @@ else
     args+=("$effect")
 fi
 
-# Middleout gets a one-shot opening and then freezes. Matrix loops forever.
+# middleout gets a one-shot opening and then freezes. matrix loops forever.
 static_after=0
 [[ $effect == middleout ]] && static_after=5
 
@@ -45,7 +45,7 @@ play_effect() {
             kill "$tte_pid" 2>/dev/null || true
             break
         fi
-        # The focused terminal receives dismissal input. One exit tears down all
+        # the focused terminal receives dismissal input. one exit tears down all
         # screensaver terminals so multi-monitor sessions end together.
         if read -r -n1 -t 1; then
             exit_screensaver
@@ -60,7 +60,7 @@ if [[ $effect == matrix ]]; then
     done
 else
     play_effect
-    # Keep the final frame visible until the user dismisses the screensaver.
+    # keep the final frame visible until the user dismisses the screensaver.
     while true; do
         if read -r -n1 -t 1; then
             exit_screensaver

@@ -1,4 +1,4 @@
-// Modified from: 24.jsonc
+// modified from: 24.jsonc
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
   "logo": {
@@ -9,12 +9,12 @@
   "display": {
     "separator": "",
     "constants": [
-      // CONSTANT {$1} - VERTICAL BARS AT START AND 75th CHARACTERS FORWARD AND BACKWARD
+      // constant {$1} - vertical bars at start and 75th characters forward and backward
       "\u001b[90m│                                                            │\u001b[60D\u001b[39m",
     ],
   },
   "modules": [
-    // CUSTOM - Top UI bar
+    // custom - top ui bar
     "break",
     "break",
     "break",
@@ -83,7 +83,7 @@
       "key": "{#90}│ {#95}Shell       {#90}│",
       "format": "{$1}{pretty-name}  {#2}[v{version}] [PID:{pid}]",
     },
-    // CUSTOM - Button UI bar
+    // custom - button ui bar
     {
       "type": "custom",
       "key": "{#90}╰─────────────╯",

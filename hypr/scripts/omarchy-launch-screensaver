@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Launch the screensaver from the cloned Omarchy source on every monitor.
-# Do not reload Hyprland here: the user's runtime monitor transforms are intentional
-# and a reload can reapply the flip from the Super+Shift+Backslash workflow.
+# launch the screensaver from the cloned omarchy source on every monitor.
+# do not reload hyprland here: the user's runtime monitor transforms are intentional
+# and a reload can reapply the flip from the super+shift+backslash workflow.
 set -u
 
 if ! command -v tte >/dev/null 2>&1; then
@@ -72,8 +72,8 @@ for monitor in "${monitors[@]}"; do
                 -e "${runner[@]}" ;;
     esac
 
-    # Lavat has no Omarchy window rule, so make its terminal fullscreen after
-    # it maps without reloading Hyprland (reload can reapply monitor flips).
+    # lavat has no omarchy window rule, so make its terminal fullscreen after
+    # it maps without reloading hyprland (reload can reapply monitor flips).
     if [[ $class == org.lavat.screensaver ]]; then
         for _ in {1..40}; do
             active=$(hyprctl activewindow -j 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("class", ""))')

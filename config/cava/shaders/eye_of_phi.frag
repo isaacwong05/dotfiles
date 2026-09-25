@@ -1,6 +1,6 @@
 #version 330
 
-// this shader was stolen from shadertoy user ChunderFPV
+// this shader was stolen from shadertoy user chunderfpv
 
 #define SCALE 8.0
 #define PI radians(180.0)
@@ -13,10 +13,10 @@ out vec4 fragColor;
 
 uniform float bars[512];
 
-uniform int bars_count;    // number of bars (left + right) (configurable)
+uniform int bars_count; // number of bars (left + right) (configurable)
 uniform float shader_time; // shader execution time s
-uniform int bar_width;     // bar width (configurable), not used here
-uniform int bar_spacing;   // space between bars (configurable)
+uniform int bar_width; // bar width (configurable), not used here
+uniform int bar_spacing; // space between bars (configurable)
 
 uniform vec3 u_resolution; // window resolution
 
@@ -39,27 +39,27 @@ vec3 gm(vec3 c, float n, float t, float w, float d, bool i) {
 // denominator spiral, use 1/n for numerator
 // ( screen xy, spiral exponent, decimal, line width, hardness, rotation )
 float ds(vec2 u, float e, float n, float w, float h, float ro) {
-  float ur = length(u);          // unit radius
-  float sr = pow(ur, e);         // spiral radius
+  float ur = length(u); // unit radius
+  float sr = pow(ur, e); // spiral radius
   float a = round(sr) * n * TAU; // arc
-  vec2 xy = CS(a + ro) * ur;     // xy coords
-  float l = PT(u - xy, w);       // line
-  float s = mod(sr + 0.5, 1.0);  // gradient smooth
-  s = min(s, 1.0 - s);           // darken filter
+  vec2 xy = CS(a + ro) * ur; // xy coords
+  float l = PT(u - xy, w); // line
+  float s = mod(sr + 0.5, 1.0); // gradient smooth
+  s = min(s, 1.0 - s); // darken filter
   return l * s * h;
 }
 
 void main() {
   float t = shader_time / PI * 2.0;
-  vec4 m = vec4(0, 0, 0, 0);                 // iMouse;
+  vec4 m = vec4(0, 0, 0, 0); // imouse;
   m.xy = m.xy * 2.0 / u_resolution.xy - 1.0; // ±1x, ±1y
   if (m.z > 0.0)
     t += m.y * SCALE; // move time with mouse y
   float z = (m.z > 0.0) ? pow(1.0 - abs(m.y), sign(m.y)) : 1.0; // zoom (+)
   float e = (m.z > 0.0) ? pow(1.0 - abs(m.x), -sign(m.x))
-                        : 1.0;                   // screen exponent (+)
+                        : 1.0; // screen exponent (+)
   float se = (m.z > 0.0) ? e * -sign(m.y) : 1.0; // spiral exponent
-  vec3 bg = vec3(0);                             // black background
+  vec3 bg = vec3(0); // black background
 
   float aa = 3.0; // anti-aliasing
 
@@ -74,18 +74,18 @@ void main() {
             exp(log(abs(uv)) * e) * sign(uv); // warp screen space with exponent
 
       float px = length(fwidth(uv)); // pixel width
-      float x = uv.x;                // every pixel on x
-      float y = uv.y;                // every pixel on y
-      float l = length(uv);          // hypot of xy: sqrt(x*x+y*y)
+      float x = uv.x; // every pixel on x
+      float y = uv.y; // every pixel on y
+      float l = length(uv); // hypot of xy: sqrt(x*x+y*y)
 
-      float mc = (x * x + y * y - 1.0) / y;  // metallic circle at xy
+      float mc = (x * x + y * y - 1.0) / y; // metallic circle at xy
       float g = min(abs(mc), 1.0 / abs(mc)); // gradient
       vec3 gold = vec3(1.0, 0.6, 0.0) * g * l;
       vec3 blue = vec3(0.3, 0.5, 0.9) * (1.0 - g);
       vec3 rgb = max(gold, blue);
 
-      float w = 0.1;                                      // line width
-      float d = 0.4;                                      // shadow depth
+      float w = 0.1; // line width
+      float d = 0.4; // shadow depth
       c = max(c, gm(rgb, mc, -t, w * bars[0], d, false)); // metallic
       c = max(c, gm(rgb, abs(y / x) * sign(y), -t, w * bars[1], d,
                     false)); // tangent
@@ -95,7 +95,7 @@ void main() {
                     true)); // sqrt circles
 
       c += rgb * ds(uv, se, t / TAU, px * 2.0 * bars[4], 2.0, 0.0); // spiral 1a
-      c += rgb * ds(uv, se, t / TAU, px * 2.0 * bars[5], 2.0, PI);  // spiral 1b
+      c += rgb * ds(uv, se, t / TAU, px * 2.0 * bars[5], 2.0, PI); // spiral 1b
       c +=
           rgb * ds(uv, -se, t / TAU, px * 2.0 * bars[6], 2.0, 0.0); // spiral 2a
       c += rgb * ds(uv, -se, t / TAU, px * 2.0 * bars[7], 2.0, PI); // spiral 2b

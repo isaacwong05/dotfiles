@@ -1,24 +1,22 @@
 ##############################################
-#                                            #
-#         Everforest Dark Hard Theme         #
-#                                            #
+# everforest dark hard theme #
 ##############################################
 
-# This theme was created by: https://github.com/fzahner ! Thank you <3
+# this theme was created by: https://github.com/fzahner ! thank you <3
 
-# This contains the theme config file for superfile! For more details see:
+# this contains the theme config file for superfile! for more details see:
 # https://superfile.dev/configure/custom-theme/
 
 ###############################################################################
-#                           Code Syntax Highlighting                          #
+# code syntax highlighting #
 ###############################################################################
 
-# Find one you like at: https://github.com/alecthomas/chroma/blob/master/styles.
+# find one you like at: https://github.com/alecthomas/chroma/blob/master/styles.
 
 code_syntax_highlight = "evergarden"
 
 ###############################################################################
-#                                 Base Colors                                 #
+# base colors #
 ###############################################################################
 
 #-- Full Screen
@@ -26,7 +24,7 @@ full_screen_fg = "#d3c6aa"
 full_screen_bg = "#272e33"
 
 #-- Gradient
-# Note: This currently only supports two colors.
+# note: this currently only supports two colors.
 gradient_color = ["#a7c080", "#e67e80"]
 
 #-- File Panel

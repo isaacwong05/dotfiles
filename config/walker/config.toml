@@ -1,4 +1,4 @@
-# Walker overrides — restrained monochrome panel.
+# walker overrides — restrained monochrome panel.
 theme = "monochrome"
 force_keyboard_focus = true
 ext_background_effect_blur = true

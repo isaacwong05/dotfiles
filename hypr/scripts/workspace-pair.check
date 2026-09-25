@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Check workspace-pair honors the external-monitor gate: on one display a
-# switch/move is plain, with HDMI-A-1 both halves of the pair are addressed.
-# Mocks hyprctl; run from anywhere: bash workspace-pair.check
+# check workspace-pair honors the external-monitor gate: on one display a
+# switch/move is plain, with hdmi-a-1 both halves of the pair are addressed.
+# mocks hyprctl; run from anywhere: bash workspace-pair.check
 set -euo pipefail
 
 script=$(dirname "$(readlink -f "$0")")/workspace-pair
@@ -34,7 +34,7 @@ export PATH="$tmp:$PATH"
 run() { FIXTURE_EXTERNAL=$1 FIXTURE_FOCUSED=$2 FIXTURE_LOG=$log "$script" "$3" "$4" >/dev/null; }
 count() { grep -c "$1" "$log" || true; }
 
-# single monitor: switch stays put, never mentions HDMI
+# single monitor: switch stays put, never mentions hdmi
 run 0 eDP-1 switch 3
 grep -q 'focus({ workspace = 3 })' "$log"
 [[ $(count 'HDMI-A-1') -eq 0 ]]
