@@ -12,13 +12,9 @@ alias md='glow'
 alias testnet='curl -4 -IsS --max-time 10 https://example.com | head'
 alias spt='spotify_player'
 alias zconf='nvim ~/.zshrc'
-alias rb='source ~/.zshrc'
+alias reload='source ~/.zshrc'
 alias wtf='tldr'
 alias lc='z $(find * -type d | fzf)'
-
-# dictation modes (hold Mod+D to talk)
-alias dten='whisper-dict-mode-en'
-alias dtzh='whisper-dict-mode-zh'
 
 # Tailscale
 export TAILTUI_THEME="$HOME/.config/tailtui/tailtui.toml"

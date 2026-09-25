@@ -1,0 +1,13 @@
+[Unit]
+Description=Quickshell notification daemon and center
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/quickshell --path %h/.config/quickshell/notifications/shell.qml
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target

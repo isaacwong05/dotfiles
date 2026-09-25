@@ -1,63 +1,68 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to coding agents working in this repository.
 
 ## What this repo is
 
-Personal NixOS dotfiles for a niri/Wayland desktop. All configs are symlinked from `~/git/dotfiles` into `~/.config`, so edits here go live immediately.
+Personal dotfiles for an Arch Linux laptop running Hyprland on Wayland. The
+active Hyprland configuration is Lua-based and lives in `hypr/`; most app
+configs are symlinked from this repository into `~/.config`.
+
+Do not add NixOS, Niri, or Noctalia configuration here. They are no longer
+part of the active setup.
 
 ## Applying changes
 
 ```bash
-rb           # nh os switch ~/git/dotfiles/nixos  — rebuild & switch NixOS config
-nixup        # nix flake update + rebuild + optional git push
-checkup      # health check (disk, generations, failed units); --clean to gc
+# Reload the active compositor configuration
+hyprctl reload
+
+# Reload changed user units
+systemctl --user daemon-reload
+systemctl --user restart notifications.service
 ```
 
-The flake hostname is `nixos` (`nixosConfigurations.nixos` in `flake.nix`). The flake lives at `~/git/dotfiles/nixos/`.
+The repository is at `~/dotfiles`. Changes to symlinked configs are live
+immediately; restart the relevant application or user service when needed.
 
 ## Repository structure
 
-| path                                  | what it is                                                                               |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `nixos/flake.nix`                     | Flake inputs and the single `nixosConfigurations.nixos` output                           |
-| `nixos/configuration.nix`             | System config: boot (limine), hardware (NVIDIA prime offload), packages, services, users |
-| `nixos/home.nix`                      | home-manager config: idle/lockscreen (swayidle + swaylock-plugin), GTK theme, cursor     |
-| `nixos/overlays/whisper-dict.nix`     | Custom packages: `whisper-dict`, `whisper-dict-daemon`, mode-switch scripts, ggml models |
-| `nixos/overlays/lockscreen-tools.nix` | Custom builds of `windowtolayer` and `lavat` from flake non-flake sources                |
-| `nixos/packages/tuxedo.nix`           | Tuxedo keyboard driver package                                                           |
-| `nixos/scripts/`                      | `update.sh` (nixup) and `checkup.sh` shell scripts                                       |
-| `niri/config.kdl`                     | Niri compositor config: keybinds, layout, output, window rules                           |
-| `niri/scripts/`                       | Helper scripts called from niri keybinds                                                 |
-| `ghostty/config`                      | Ghostty terminal config                                                                  |
-| `nvim/`                               | Neovim config (LazyVim-based)                                                            |
-| `.zshrc`                              | Zsh config: zinit plugins, aliases, starship, zoxide                                     |
+| path | what it is |
+| --- | --- |
+| `hypr/` | Hyprland Lua config, monitor layout, keybinds, rules, and scripts |
+| `quickshell/` | Power menu, notifications, and idle screensaver QML |
+| `config/systemd/user/` | User units maintained by this repository |
+| `ghostty/` | Ghostty terminal config |
+| `nvim/` | Neovim/LazyVim config |
+| `config/` | Portable application configs |
+| `scripts/` | Arch maintenance, snapshots, screenshots, and helper scripts |
+| `.zshrc` | Zsh, zinit, Starship, zoxide, and local aliases |
+| `etc-staging/` | Files intended for `/etc`, copied manually with care |
 
-## Nix patterns used here
+Tide Island is installed as an Arch package and runs from
+`/usr/share/tide-island`; its old vendored source is not part of this repo.
 
-- **Flake-based** (`nix-command` + `flakes` experimental features enabled).
-- **home-manager** runs as a NixOS module (`home-manager.nixosModules.home-manager`), not standalone.
-- **Overlays** are applied in `flake.nix` via `nixpkgs.overlays`; `lockscreen-tools.nix` takes `{ inputs }` so it can reference non-flake sources (`windowtolayer-src`, `lavat-src`).
-- **`specialArgs`** passes flake inputs into `configuration.nix` so packages like `noctalia`, `herdr`, etc. are available as function arguments.
-- Nix formatter: `nixfmt`. Linting: `statix` (lint), `deadnix` (unused bindings).
+## Active desktop stack
 
-## Whisper dictation system
+- Arch Linux
+- Hyprland + `hyprmoncfg`
+- Quickshell notifications and power menu
+- Tide Island
+- Walker and Elephant for launching/search
+- Ghostty
+- Neovim/LazyVim
+- Zsh + Starship + zinit
+- PipeWire/WirePlumber
+- Omarchy/lavat screensaver scripts
+- Dusky STT user service
 
-Hold-to-talk via `Mod+D` (niri keybind). The evdev daemon (`whisper-dict-daemon`) reads raw `/dev/input` events so it sees key release (unlike niri binds). It runs as a systemd user service started with `graphical-session.target`. The daemon Python source is `overlays/whisper-dict-daemon.py` with `@placeholder@` tokens substituted at build time with Nix store paths.
-
-Switch language modes at runtime (no rebuild):
-
-```bash
-dten   # whisper-dict-mode-en — base.en model, English only, fast
-dtzh   # whisper-dict-mode-zh — small model, auto-detect, traditional Chinese via opencc
-```
-
-## Key aliases
+## Useful checks
 
 ```bash
-rb        # nixos-rebuild (nh os switch)
-nixedit   # edit configuration.nix
-nixflake  # edit flake.nix
-nixup     # update flake + rebuild
-checkup   # system health check
+systemctl --user --failed
+systemctl --user status notifications.service omarchy-screensaver-idle.service tide-island.service
+hyprctl monitors
+hyprctl clients
 ```
+
+Keep secrets, runtime state, logs, caches, and generated files out of commits.
