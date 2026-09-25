@@ -1,19 +1,18 @@
 # aliases
-alias rb='nh os switch ~/git/dotfiles/nixos'
-alias nixedit='nvim ~/git/dotfiles/nixos/configuration.nix'
-alias nixflake='nvim ~/git/dotfiles/nixos/flake.nix'
-alias nixup="~/git/dotfiles/nixos/scripts/update.sh"
-alias checkup="~/git/dotfiles/nixos/scripts/checkup.sh"
 alias cl='clear'
-alias cd='z'
+eval "$(zoxide init zsh)"
+
 alias ls='eza --icons=always -a'
 alias l='ls'
 alias ff='fastfetch'
-alias af='anifetch ~/nixos-logo.mp4 -W 30 -H 15 -fr -ca "--symbols braille --colors 2 --fg-only" -c ~/.config/fastfetch/anifetch.jsonc'
+alias orb="$HOME/dotfiles/scripts/orb"
+alias af='anifetch "$HOME/.config/fastfetch/orb.mp4" -W 50 -H 25 -r 15 -pr 15 -ca "--symbols braille --colors 2 --bg #0f0f0f --preprocess off --dither none --fg-only" -c "$HOME/.config/fastfetch/anifetch.jsonc" --center --no-input-restore'
 alias nt='wlctl'
-alias spf='superfile'
+alias md='glow'
+alias testnet='curl -4 -IsS --max-time 10 https://example.com | head'
 alias spt='spotify_player'
 alias zconf='nvim ~/.zshrc'
+alias rb='source ~/.zshrc'
 alias wtf='tldr'
 alias lc='z $(find * -type d | fzf)'
 
@@ -22,9 +21,11 @@ alias dten='whisper-dict-mode-en'
 alias dtzh='whisper-dict-mode-zh'
 
 # Tailscale
-alias ts='tailscale status'
-alias tsip='tailscale ip'
-alias tsping='tailscale ping'
+export TAILTUI_THEME="$HOME/.config/tailtui/tailtui.toml"
+alias tsui='tailtui'
+
+# Arch maintenance TUI
+alias maint='arch-maintenance-tui'
 
 # zinit
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
@@ -44,8 +45,15 @@ zinit light Aloxaf/fzf-tab
 zinit ice wait lucid
 zinit light zsh-users/zsh-history-substring-search
 
-zinit ice wait lucid
+zinit ice lucid
 zinit light hlissner/zsh-autopair
+
+# Keep suggestions synchronous: they must register ZLE widgets in every shell,
+# including a freshly opened terminal.  The muted gray matches the monochrome UI.
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+zinit ice lucid
+zinit light zsh-users/zsh-autosuggestions
 
 # options
 setopt NOMATCH NOTIFY
@@ -64,7 +72,10 @@ setopt AUTO_CD AUTO_PUSHD
 # editor
 export EDITOR=nvim VISUAL=nvim
 
-# bun
+# local tools and runtimes
+export PATH="$HOME/.local/bin:$PATH"
+alias hyprctl="$HOME/dotfiles/scripts/hyprctl"
+alias tuxedo-pull='tuxedo-todoist-sync pull --file "$HOME/Documents/todo/todo.txt" --apply'
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
@@ -77,6 +88,28 @@ zinit cdreplay -q
 # prompt
 eval "$(starship init zsh)"
 
+if [[ -r "$HOME/.config/todoist/token" ]]; then
+  export TODOIST_API_TOKEN="$(<"$HOME/.config/todoist/token")"
+fi
+
 export PATH="$PATH:/home/isaac/.local/go/bin"
 
 export PATH="$PATH:/home/isaac/go/bin"
+
+export PATH=$PATH:~/.cargo/bin
+
+. "$HOME/.local/share/../bin/env"
+
+# bun completions
+[ -s "/home/isaac/.bun/_bun" ] && source "/home/isaac/.bun/_bun"
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+source /home/isaac/.local/share/leaf/completions/_leaf
+
+# Atuin history and shell hooks
+if (( $+commands[atuin] )); then
+  eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
+  bindkey -M emacs '^h' atuin-search
+  bindkey -M viins '^h' atuin-search-viins
+  bindkey -M vicmd '^h' atuin-search-vicmd
+fi

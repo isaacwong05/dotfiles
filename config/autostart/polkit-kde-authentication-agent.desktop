@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=PolicyKit Authentication Agent
+Comment=Authentication dialogs for graphical applications
+Exec=/usr/lib/polkit-kde-authentication-agent-1
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

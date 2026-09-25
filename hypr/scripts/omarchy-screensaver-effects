@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Preview one TerminalTextEffects animation at a time.
+set -u
+
+art="$HOME/.config/omarchy/branding/screensaver.txt"
+common=(
+    -i "$art"
+    --no-color
+    --frame-rate 120
+    --canvas-width 0
+    --canvas-height 0
+    --reuse-canvas
+    --anchor-canvas c
+    --anchor-text c
+    --no-eol
+    --no-restore-cursor
+)
+effects=(
+    beams binarypath blackhole bouncyballs bubbles burn colorshift crumble
+    decrypt errorcorrect expand fireworks highlight laseretch matrix middleout
+    orbittingvolley overflow pour print rain randomsequence rings scattered
+    slice slide smoke spotlights spray swarm sweep synthgrid thunderstorm
+    unstable vhstape waves wipe
+)
+
+if [[ ${1:-} == "--list" ]]; then
+    printf '%s\n' "${effects[@]}"
+    exit 0
+fi
+
+preview_pid=""
+stop_preview() {
+    if [[ -n $preview_pid ]]; then
+        kill "$preview_pid" 2>/dev/null || true
+        wait "$preview_pid" 2>/dev/null || true
+        preview_pid=""
+    fi
+}
+trap 'stop_preview; printf "\\033[0m\\033[?25h\\n"' EXIT INT TERM
+
+run_effect() {
+    local effect=$1
+    clear
+    printf 'Effect: %s\nPress any key to stop it.\n' "$effect"
+    tte "${common[@]}" "$effect" &
+    preview_pid=$!
+    read -r -n1 _ || true
+    stop_preview
+}
+
+if [[ -n ${1:-} ]]; then
+    run_effect "$1"
+    exit 0
+fi
+
+PS3='Choose an effect (number): '
+while true; do
+    clear
+    printf 'Omarchy screensaver effects\n\n'
+    select effect in "${effects[@]}" Quit; do
+        if [[ $effect == Quit ]]; then
+            clear
+            exit 0
+        elif [[ -n ${effect:-} ]]; then
+            run_effect "$effect"
+            break
+        else
+            printf 'Invalid selection\n'
+        fi
+    done
+done

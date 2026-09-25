@@ -1,46 +1,103 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-  "logo": {
-    "type": "none",
-    "padding": {
-      "left": 20,
-      "top": 4,
-    },
-  },
+  "logo": null,
   "display": {
-    "separator": "  ",
+    "separator": "",
     "color": {
-      "keys": "magenta",
+      "keys": "white",
+      "output": "white",
     },
     "size": {
       "ndigits": 0,
       "maxPrefix": "MB",
     },
     "key": {
-      "type": "icon",
+      "type": "string",
     },
   },
   "modules": [
-    "break",
     {
       "type": "title",
-      "color": {
-        "user": "green",
-        "at": "red",
-        "host": "blue",
-      },
+      "key": "{#97}󰀄  ",
+      "format": "{#97}{user-name}@{host-name}",
     },
-    "break",
-    "users",
-    "os",
-    "cpu",
-    "gpu",
-    "uptime",
+    {
+      "type": "custom",
+      "key": " ",
+      "format": "{#97}╭────────────────────────────────────────╮",
+    },
+    {
+      "type": "os",
+      "key": "{#97}│ 󰣇 OS       │ ",
+      "format": "{?pretty-name}{pretty-name}{?}{/pretty-name}{name}{/} {arch}",
+    },
+    {
+      "type": "kernel",
+      "key": "{#97}│  Kernel   │ ",
+      "format": "{release}",
+    },
+    {
+      "type": "packages",
+      "key": "{#97}│ 󰏗 Packages │ ",
+      "format": "{all} (pacman)",
+    },
+    {
+      "type": "display",
+      "key": "{#97}│ 󰍹 Display  │ ",
+      "format": "{width}x{height} @ {refresh-rate} Hz",
+    },
+    {
+      "type": "wm",
+      "key": "{#97}│  WM       │ ",
+      "format": "{pretty-name} ({protocol-name})",
+    },
+    {
+      "type": "terminal",
+      "key": "{#97}│  Terminal │ ",
+      "format": "{pretty-name}",
+    },
+    {
+      "type": "custom",
+      "key": " ",
+      "format": "{#97}╰────────────────────────────────────────╯",
+    },
+    {
+      "type": "custom",
+      "key": " ",
+      "format": "{#97}╭────────────────────────────────────────╮",
+    },
+    {
+      "type": "cpu",
+      "key": "{#97}│ 󰻠 CPU      │ ",
+      "format": "{name}",
+    },
+    {
+      "type": "gpu",
+      "key": "{#97}│ 󰢮 GPU      │ ",
+      "format": "{name}",
+    },
+    {
+      "type": "memory",
+      "key": "{#97}│  Memory   │ ",
+      "format": "{used} / {total} ({percentage})",
+    },
+    {
+      "type": "uptime",
+      "key": "{#97}│  Uptime   │ ",
+      "format": "{formatted}",
+    },
+    {
+      "type": "custom",
+      "key": " ",
+      "format": "{#97}╰────────────────────────────────────────╯",
+    },
     {
       "type": "colors",
-      "key": "Colors",
+      "key": " ",
+      "symbol": "circle",
+      "paddingLeft": 2,
       "block": {
-        "range": [1, 6],
+        "range": [1, 8],
       },
     },
   ],

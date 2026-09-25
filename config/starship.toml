@@ -890,7 +890,7 @@ format = "via [$symbol($version )]($style)"
 version_format = "v${raw}"
 symbol = " "
 style = "bold green"
-disabled = false
+disabled = true
 not_capable_style = "bold red"
 detect_extensions = [
     "js",
@@ -1033,7 +1033,7 @@ format = "is [$symbol$version]($style) "
 symbol = "📦 "
 style = "208 bold"
 display_private = false
-disabled = false
+disabled = true
 version_format = "v${raw}"
 
 [perl]
@@ -1353,7 +1353,7 @@ commands = [
 
 [time]
 format = "[$time]($style)"
-style = "bold yellow"
+style = "bold white"
 time_format = "%I:%M %p"
 disabled = false
 utc_time_offset = "local"

@@ -175,7 +175,6 @@ zoxide_support = true
 # The file path will be appended as the last argument.
 # MUST BE IN THE VERY END OF THE FILE BECAUSE TOML CANNOT CLOSE TABLES
 # Example:
-#   png = "feh"
-#   pdf = "zathura"
-#   conf = "nvim"
 [open_with]
+pdf = "zathura"
+conf = "nvim"

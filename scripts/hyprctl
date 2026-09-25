@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ "${1:-}" = reload ]; then
+    exec "$HOME/.config/hypr/scripts/rotate-screen" --reload
+fi
+
+exec /usr/sbin/hyprctl "$@"

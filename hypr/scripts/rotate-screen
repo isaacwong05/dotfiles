@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+# Rotate the focused monitor 180 degrees; press the bind again to flip back.
+# `--reload` preserves every non-zero transform across a config reload.
+set -euo pipefail
+
+hyprctl_bin=/usr/sbin/hyprctl
+
+monitor_transform() {
+    "$hyprctl_bin" monitors -j | MONITOR="$1" python3 -c '
+import json, os, sys
+m = next((x for x in json.load(sys.stdin) if x["name"] == os.environ["MONITOR"]), None)
+if m is None:
+    sys.exit("monitor %s not found" % os.environ["MONITOR"])
+print(m["transform"])
+'
+}
+
+apply_transform() {
+    local monitor=$1 target=$2 rule
+    rule=$("$hyprctl_bin" monitors -j | MONITOR="$monitor" TARGET="$target" python3 -c '
+import json, os, sys
+m = next((x for x in json.load(sys.stdin) if x["name"] == os.environ["MONITOR"]), None)
+if m is None:
+    sys.exit(1)
+print("hl.monitor({ output=%r, mode=%r, position=%r, scale=%r, transform=%s })"
+      % (m["name"], "%dx%d@%d" % (m["width"], m["height"], round(m["refreshRate"])),
+         "%dx%d" % (m["x"], m["y"]), m["scale"], os.environ["TARGET"]))
+') || return 0
+    "$hyprctl_bin" eval "$rule" >/dev/null
+}
+
+if [ "${1:-}" = "--apply" ]; then
+    apply_transform "$2" "$3"
+    exit
+fi
+
+if [ "${1:-}" = "--watch" ]; then
+    socket="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+    exec python3 - "$socket" "$0" <<'PY'
+import json
+import os
+import select
+import socket
+import subprocess
+import sys
+import time
+
+socket_path, script = sys.argv[1:]
+hyprctl = "/usr/sbin/hyprctl"
+
+
+def transforms():
+    try:
+        output = subprocess.check_output(
+            [hyprctl, "monitors", "-j"], stderr=subprocess.DEVNULL
+        )
+        monitors = json.loads(output)
+    except (OSError, ValueError, subprocess.CalledProcessError):
+        return {}
+    return {
+        monitor["name"]: int(monitor.get("transform", 0))
+        for monitor in monitors
+        if int(monitor.get("transform", 0)) != 0
+    }
+
+
+while True:
+    try:
+        event_socket = socket.socket(socket.AF_UNIX)
+        event_socket.connect(socket_path)
+        event_socket.setblocking(False)
+        break
+    except OSError:
+        time.sleep(0.2)
+
+last = transforms()
+pending = b""
+while True:
+    readable, _, _ = select.select([event_socket], [], [], 0.1)
+    if not readable:
+        # ponytail: 10Hz polling is enough here; replace with monitor events only
+        # if transform changes need sub-100ms reaction time.
+        last = transforms()
+        continue
+
+    try:
+        pending += event_socket.recv(4096)
+    except OSError:
+        break
+    if not pending:
+        break
+
+    *lines, pending = pending.split(b"\n")
+    for raw in lines:
+        if raw.decode(errors="replace") != "configreloaded>>":
+            continue
+        saved = last.copy()
+        time.sleep(0.1)
+        for monitor, transform in saved.items():
+            subprocess.run(
+                [script, "--apply", monitor, str(transform)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+PY
+fi
+
+reload_preserving_transforms() {
+    local snapshot monitor transform
+    snapshot=$(mktemp)
+    trap 'rm -f "${snapshot:-}"' EXIT
+
+    "$hyprctl_bin" monitors -j | python3 -c '
+import json, sys
+for monitor in json.load(sys.stdin):
+    transform = int(monitor.get("transform", 0))
+    if transform:
+        print("%s\t%d" % (monitor["name"], transform))
+' >"$snapshot"
+
+    "$hyprctl_bin" reload
+    sleep 0.1
+    while IFS=$'\t' read -r monitor transform; do
+        [ -n "$monitor" ] && apply_transform "$monitor" "$transform"
+    done <"$snapshot"
+}
+
+if [ "${1:-}" = "--reload" ]; then
+    reload_preserving_transforms
+    exit
+fi
+
+monitor=$("$hyprctl_bin" activeworkspace -j | sed -n 's/.*"monitor": "\([^\"]*\)".*/\1/p')
+[ -n "$monitor" ] || { echo "no active monitor" >&2; exit 1; }
+current=$(monitor_transform "$monitor")
+target=$(( (current + 2) % 4 ))
+apply_transform "$monitor" "$target"

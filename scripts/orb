@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+states=(working searching solving listening connecting weaving composing breathing shaping)
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch"
+source_dir="${ORB_SOURCE_DIR:-$HOME/orb-cap/orbs}"
+state_file="$config_dir/orb.state"
+active_file="$config_dir/orb.mp4"
+
+usage() {
+  cat <<'EOF'
+Usage: orb <state>
+       orb list
+       orb current
+
+States: working searching solving listening connecting weaving composing breathing shaping
+EOF
+}
+
+case "${1:-}" in
+  list)
+    printf '%s\n' "${states[@]}"
+    exit 0
+    ;;
+  current)
+    if [[ -r "$state_file" ]]; then
+      cat "$state_file"
+    else
+      printf '%s\n' 'unknown'
+    fi
+    exit 0
+    ;;
+  -h|--help|help|'')
+    usage
+    exit 0
+    ;;
+ esac
+
+state=$1
+if [[ ! " ${states[*]} " == *" $state "* ]]; then
+  printf 'orb: unknown state: %s\n\n' "$state" >&2
+  usage >&2
+  exit 2
+fi
+
+source="$source_dir/$state.mp4"
+if [[ ! -r "$source" ]]; then
+  printf 'orb: missing %s\nRender it with: %s/render-all.sh\n' "$source" "$HOME/orb-cap" >&2
+  exit 1
+fi
+
+mkdir -p "$config_dir"
+cp "$source" "$active_file"
+printf '%s\n' "$state" > "$state_file"
+if command -v anifetch >/dev/null 2>&1; then
+  anifetch --clear >/dev/null
+fi
+printf 'orb: %s\ncache: cleared\nrun: af\n' "$state"

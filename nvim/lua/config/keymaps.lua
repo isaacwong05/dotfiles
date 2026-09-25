@@ -35,9 +35,11 @@ map("n", "<leader>Tv", "<cmd>vsplit | terminal<cr>", { desc = "Terminal (Vertica
 -- themery
 map("n", "<leader>tt", "<cmd>Themery<cr>", { desc = "Theme Picker" })
 
--- tabs
-map("n", "<C-t>", "<cmd>tabnew<cr>", { desc = "New Tab" })
+-- browser-style buffer controls
+map("n", "<C-t>", "<cmd>enew<cr>", { desc = "New Buffer" })
 for i = 1, 9 do
-  map("n", "<C-" .. i .. ">", "<cmd>tabnext " .. i .. "<cr>", { desc = "Go to Tab " .. i })
+  map("n", "<C-" .. i .. ">", "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "Go to Buffer " .. i })
 end
-map("n", "<C-w>", "<cmd>tabclose<cr>", { desc = "Close Tab" })
+map("n", "<C-w>", function()
+  Snacks.bufdelete({ wipe = true })
+end, { desc = "Close Buffer" })

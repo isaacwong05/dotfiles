@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: system-snapshot <command> [args...]
+
+Commands:
+  devices              List disks Timeshift can use as snapshot targets
+  list                 List existing snapshots
+  create [comment]     Create a snapshot
+  delete <snapshot>    Delete a snapshot by name
+  restore <snapshot>   Restore a snapshot by name
+  setup                Show the remaining one-time setup steps
+EOF
+}
+
+require_timeshift() {
+  if ! command -v timeshift >/dev/null 2>&1; then
+    printf '%s\n' 'Timeshift is not installed.' >&2
+    printf '%s\n' 'Install it with: sudo pacman -S timeshift' >&2
+    exit 1
+  fi
+}
+
+command_name=${1:-}
+shift || true
+
+case "$command_name" in
+  devices)
+    require_timeshift
+    sudo timeshift --list-devices
+    ;;
+  list)
+    require_timeshift
+    sudo timeshift --list --scripted
+    ;;
+  create)
+    require_timeshift
+    comment=${*:-manual snapshot}
+    sudo timeshift --create --scripted --comments "$comment"
+    ;;
+  delete)
+    require_timeshift
+    snapshot=${1:?snapshot name required}
+    sudo timeshift --delete --scripted --snapshot "$snapshot"
+    ;;
+  restore)
+    require_timeshift
+    snapshot=${1:?snapshot name required}
+    sudo timeshift --restore --scripted --snapshot "$snapshot"
+    ;;
+  setup)
+    cat <<'EOF'
+System snapshots are intentionally not enabled yet.
+
+This machine uses ext4, so snapshots use Timeshift's rsync mode rather than
+Omarchy's Btrfs snapshot workflow. Install Timeshift, attach a separate disk,
+and then run:
+
+  system-snapshot devices
+
+Choose the mounted backup disk in Timeshift's GUI:
+
+  sudo timeshift-gtk
+
+Do not enable a timer until a separate snapshot target exists.
+EOF
+    ;;
+  -h|--help|help|'')
+    usage
+    ;;
+  *)
+    printf 'Unknown command: %s\n\n' "$command_name" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

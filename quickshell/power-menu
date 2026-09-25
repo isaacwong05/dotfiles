@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec quickshell --daemonize --no-duplicate --path "${XDG_CONFIG_HOME:-$HOME/.config}/quickshell/power-menu.qml"

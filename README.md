@@ -9,6 +9,23 @@ portable `~/.config` app configs that work on any distro.
 a [niri](https://github.com/YaLTeR/niri) scrolling-tiling wayland setup,
 themed around a minimal monochrome look with a noctalia shell.
 
+## system snapshots
+
+The current Arch install uses ext4, so it cannot use Omarchy's native Btrfs
+snapshots. The repository includes a small Timeshift wrapper for system-only
+snapshots:
+
+```bash
+sudo pacman -S timeshift
+system-snapshot setup
+sudo timeshift-gtk
+```
+
+Select a separate external disk in Timeshift and leave scheduling disabled until
+that disk is available. `system-snapshot create` then creates a manual restore
+point; Timeshift deliberately excludes home-directory data. Personal files and
+Vaultwarden-backed credentials are a separate backup layer.
+
 ## repo layout
 
 | path              | description                                                  |

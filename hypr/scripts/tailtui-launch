@@ -1,0 +1,3 @@
+#!/bin/sh
+export TAILTUI_THEME=/home/isaac/.config/tailtui/tailtui.toml
+exec ghostty --class=io.github.phundahl.tailtui -e /home/isaac/go/bin/tailtui

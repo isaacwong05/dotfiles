@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Apply a media change, then publish it for the Quickshell media OSD.
+set -euo pipefail
+
+runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/media-osd"
+state_file="$runtime_dir/state"
+mkdir -p -m 700 "$runtime_dir"
+
+case "${1:-}" in
+  volume-up)
+    wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+    kind="volume"
+    ;;
+  volume-down)
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    kind="volume"
+    ;;
+  volume-mute)
+    wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    kind="volume"
+    ;;
+  brightness-up)
+    brightnessctl -e4 -n2 set 5%+
+    kind="brightness"
+    ;;
+  brightness-down)
+    brightnessctl -e4 -n2 set 5%-
+    kind="brightness"
+    ;;
+  *)
+    echo "usage: media-osd {volume-up|volume-down|volume-mute|brightness-up|brightness-down}" >&2
+    exit 64
+    ;;
+esac
+
+if [[ "$kind" == "volume" ]]; then
+  volume="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{printf "%d", $2 * 100 + 0.5}')"
+  muted=0
+  wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q '\[MUTED\]' && muted=1
+  value="$volume"
+else
+  value="$(brightnessctl -m | awk -F, '{gsub(/%/, "", $4); print $4}')"
+  muted=0
+fi
+
+# nanoseconds ensure repeated identical key presses still refresh the OSD.
+printf '%s\t%s\t%s\t%s\n' "$kind" "$value" "$muted" "$(date +%s%N)" > "$state_file"

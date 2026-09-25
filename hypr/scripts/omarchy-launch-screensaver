@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Launch the screensaver from the cloned Omarchy source on every monitor.
+# Do not reload Hyprland here: the user's runtime monitor transforms are intentional
+# and a reload can reapply the flip from the Super+Shift+Backslash workflow.
+set -u
+
+if ! command -v tte >/dev/null 2>&1; then
+    printf '%s\n' 'tte is missing; run: uv tool install terminaltexteffects' >&2
+    exit 1
+fi
+if ! command -v lavat >/dev/null 2>&1; then
+    printf '%s\n' 'lavat is missing; install the Arch lavat package' >&2
+    exit 1
+fi
+if hyprctl clients -j 2>/dev/null | python3 -c 'import json,sys; raise SystemExit(not any(x.get("class") in {"org.omarchy.screensaver", "org.lavat.screensaver"} for x in json.load(sys.stdin)))'; then
+    exit 0
+fi
+
+focused=$(hyprctl monitors -j | python3 -c 'import json,sys; print(next((m["name"] for m in json.load(sys.stdin) if m.get("focused")), ""))')
+mapfile -t monitors < <(hyprctl monitors -j | python3 -c 'import json,sys; print(*(m["name"] for m in json.load(sys.stdin)), sep="\n")')
+
+hypr_focus_monitor() {
+    hyprctl dispatch "hl.dsp.focus({ monitor = \"$1\" })" >/dev/null 2>&1 ||
+        hyprctl dispatch focusmonitor "$1" >/dev/null 2>&1
+}
+
+hypr_exec() {
+    local command="$*"
+    hyprctl dispatch "hl.dsp.exec_cmd([[$command]])" >/dev/null 2>&1 || \
+        hyprctl dispatch exec -- bash -lc "$command" >/dev/null 2>&1
+}
+
+case "$(xdg-terminal-exec --print-id 2>/dev/null || true)" in
+    *kitty*) terminal=kitty ;;
+    *ghostty*) terminal=ghostty ;;
+    *Alacritty*) terminal=alacritty ;;
+    *foot*) terminal=foot ;;
+    *) printf '%s\n' 'Screensaver requires Kitty, Ghostty, Alacritty, or Foot' >&2; exit 1 ;;
+esac
+
+for monitor in "${monitors[@]}"; do
+    hypr_focus_monitor "$monitor"
+    case "$monitor" in
+        HDMI-A-1)
+            class=org.omarchy.screensaver
+            runner=("$HOME/.local/bin/omarchy-screensaver" middleout)
+            ;;
+        eDP-1|eDP-2)
+            class=org.lavat.screensaver
+            runner=("$HOME/.local/bin/omarchy-lavat-screensaver")
+            ;;
+        *)
+            class=org.omarchy.screensaver
+            runner=("$HOME/.local/bin/omarchy-screensaver" random)
+            ;;
+    esac
+
+    case "$terminal" in
+        kitty)
+            hypr_exec kitty --class "$class" \
+                --override font_size=18 --override window_padding_width=0 \
+                -e "${runner[@]}" ;;
+        ghostty)
+            hypr_exec ghostty --class="$class" \
+                --config-file="$HOME/.local/share/omarchy/default/ghostty/screensaver" \
+                --font-size=18 -e "${runner[@]}" ;;
+        alacritty)
+            hypr_exec alacritty --class="$class" \
+                -e "${runner[@]}" ;;
+        foot)
+            hypr_exec foot --app-id="$class" \
+                -e "${runner[@]}" ;;
+    esac
+
+    # Lavat has no Omarchy window rule, so make its terminal fullscreen after
+    # it maps without reloading Hyprland (reload can reapply monitor flips).
+    if [[ $class == org.lavat.screensaver ]]; then
+        for _ in {1..40}; do
+            active=$(hyprctl activewindow -j 2>/dev/null | python3 -c 'import json,sys; print(json.load(sys.stdin).get("class", ""))')
+            if [[ $active == org.lavat.screensaver ]]; then
+                hyprctl dispatch 'hl.dsp.window.fullscreen({ action = "toggle" })' >/dev/null 2>&1
+                break
+            fi
+            sleep 0.05
+        done
+    fi
+done
+
+[ -n "$focused" ] && hypr_focus_monitor "$focused"

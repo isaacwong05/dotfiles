@@ -58,6 +58,7 @@ return {
           { name = "Oxocarbon Light", colorscheme = "oxocarbon", before = [[ vim.opt.background = "light" ]] },
 
           -- monochrome / grayscale
+          { name = "Monochrome Pastel (Tuxedo)", colorscheme = "monochrome-pastel" },
           "no-clown-fiesta",
           { name = "E-ink Dark", colorscheme = "e-ink", before = [[ vim.opt.background = "dark" ]] },
           { name = "E-ink Light", colorscheme = "e-ink", before = [[ vim.opt.background = "light" ]] },

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Local adapter for the cloned Omarchy renderer.
+# The renderer intentionally kills every screensaver window when any one exits,
+# so multiple monitors dismiss together.
+set -u
+
+if ! command -v tte >/dev/null 2>&1; then
+    printf '%s\n' 'tte is missing; run: uv tool install terminaltexteffects' >&2
+    exit 1
+fi
+
+exit_screensaver() {
+    hyprctl keyword cursor:invisible false >/dev/null 2>&1 || true
+    pkill -x tte 2>/dev/null || true
+    pkill -f '[o]rg\.omarchy\.screensaver|[o]rg\.lavat\.screensaver' 2>/dev/null || true
+    exit 0
+}
+
+trap exit_screensaver INT TERM HUP QUIT
+printf '\033]11;rgb:00/00/00\007'
+hyprctl keyword cursor:invisible true >/dev/null 2>&1 || true
+
+effect=${1:-random}
+args=(
+    -i "$HOME/.config/omarchy/branding/screensaver.txt"
+    --no-color --frame-rate 120 --canvas-width 0 --canvas-height 0 --reuse-canvas
+    --anchor-canvas c --anchor-text c --no-eol --no-restore-cursor
+)
+if [[ $effect == random ]]; then
+    args+=(--random-effect)
+else
+    args+=("$effect")
+fi
+
+# Middleout gets a one-shot opening and then freezes. Matrix loops forever.
+static_after=0
+[[ $effect == middleout ]] && static_after=5
+
+play_effect() {
+    local started=$SECONDS
+    tte "${args[@]}" &
+    tte_pid=$!
+    while kill -0 "$tte_pid" 2>/dev/null; do
+        if (( static_after > 0 && SECONDS - started >= static_after )); then
+            kill "$tte_pid" 2>/dev/null || true
+            break
+        fi
+        # The focused terminal receives dismissal input. One exit tears down all
+        # screensaver terminals so multi-monitor sessions end together.
+        if read -r -n1 -t 1; then
+            exit_screensaver
+        fi
+    done
+    wait "$tte_pid" 2>/dev/null || true
+}
+
+if [[ $effect == matrix ]]; then
+    while true; do
+        play_effect
+    done
+else
+    play_effect
+    # Keep the final frame visible until the user dismisses the screensaver.
+    while true; do
+        if read -r -n1 -t 1; then
+            exit_screensaver
+        fi
+    done
+fi

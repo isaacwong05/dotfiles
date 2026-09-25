@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Run lavat on the laptop display and dismiss the other screensaver with it.
+set -u
+
+cleanup() {
+    pkill -f '[o]rg\.omarchy\.screensaver|[o]rg\.lavat\.screensaver' 2>/dev/null || true
+}
+trap cleanup INT TERM HUP QUIT EXIT
+
+# q, Escape, or Ctrl-C exits lavat; cleanup then closes the HDMI screensaver.
+lavat -g -c FFFFFF -k 000000 -G -C

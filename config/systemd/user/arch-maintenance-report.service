@@ -1,0 +1,6 @@
+[Unit]
+Description=Weekly Arch maintenance report
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 %h/dotfiles/scripts/arch-maintenance.py --report

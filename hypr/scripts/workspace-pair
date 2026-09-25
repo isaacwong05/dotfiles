@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Treat two Hyprland workspaces as one desktop: one per physical monitor.
+# Workspaces 1–10 belong to eDP-1; 11–20 are their HDMI-A-1 counterparts.
+# The pairing only exists while HDMI-A-1 is attached; on a single monitor a
+# switch/move is the plain workspace operation.
+# Usage: workspace-pair switch <1-10> | move <1-10>
+set -euo pipefail
+
+mode=${1:?usage: workspace-pair switch|move <1-10>}
+number=${2:?usage: workspace-pair switch|move <1-10>}
+main_monitor="eDP-1"
+secondary_monitor="HDMI-A-1"
+
+if ! [[ "$number" =~ ^([1-9]|10)$ ]]; then
+    echo "workspace number must be between 1 and 10" >&2
+    exit 2
+fi
+
+focused_monitor=$(hyprctl activeworkspace -j | sed -n 's/.*"monitor": "\([^"]*\)".*/\1/p')
+
+has_external() {
+    hyprctl monitors -j | grep -q '"name": "'"$secondary_monitor"'"'
+}
+
+# Hyprland's Lua configuration mode exposes its dispatchers through hl.dsp,
+# so invoke the API directly rather than legacy textual dispatch commands.
+lua() {
+    hyprctl eval "hl.dispatch($1)" >/dev/null
+}
+
+case "$mode" in
+    switch)
+        if has_external; then
+            # Select each half of the paired workspace, then restore focus to
+            # the monitor on which the shortcut was invoked.
+            side_number=$((number + 10))
+            lua "hl.dsp.focus({ monitor = \"$main_monitor\" })"
+            lua "hl.dsp.focus({ workspace = $number })"
+            lua "hl.dsp.focus({ monitor = \"$secondary_monitor\" })"
+            lua "hl.dsp.focus({ workspace = $side_number })"
+            lua "hl.dsp.focus({ monitor = \"$focused_monitor\" })"
+        else
+            lua "hl.dsp.focus({ workspace = $number })"
+        fi
+        ;;
+    move)
+        if has_external && [[ "$focused_monitor" == "$secondary_monitor" ]]; then
+            workspace=$((number + 10))
+        else
+            workspace=$number
+        fi
+        lua "hl.dsp.window.move({ workspace = \"$workspace\" })"
+        ;;
+    *)
+        echo "unknown mode: $mode" >&2
+        exit 2
+        ;;
+esac

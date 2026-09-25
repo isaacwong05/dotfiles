@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Check workspace-pair honors the external-monitor gate: on one display a
+# switch/move is plain, with HDMI-A-1 both halves of the pair are addressed.
+# Mocks hyprctl; run from anywhere: bash workspace-pair.check
+set -euo pipefail
+
+script=$(dirname "$(readlink -f "$0")")/workspace-pair
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+log=$tmp/eval.log
+
+cat > "$tmp/hyprctl" <<'EOF'
+#!/usr/bin/env bash
+case "$1" in
+    monitors)
+        if [[ "${FIXTURE_EXTERNAL:-0}" == 1 ]]; then
+            printf '{"name": "eDP-1"}\n{"name": "HDMI-A-1"}\n'
+        else
+            printf '{"name": "eDP-1"}\n'
+        fi
+        ;;
+    activeworkspace)
+        printf '{"monitor": "%s"}' "$FIXTURE_FOCUSED"
+        ;;
+    eval)
+        echo "$2" >> "$FIXTURE_LOG"
+        echo ok
+        ;;
+esac
+EOF
+chmod +x "$tmp/hyprctl"
+export PATH="$tmp:$PATH"
+
+run() { FIXTURE_EXTERNAL=$1 FIXTURE_FOCUSED=$2 FIXTURE_LOG=$log "$script" "$3" "$4" >/dev/null; }
+count() { grep -c "$1" "$log" || true; }
+
+# single monitor: switch stays put, never mentions HDMI
+run 0 eDP-1 switch 3
+grep -q 'focus({ workspace = 3 })' "$log"
+[[ $(count 'HDMI-A-1') -eq 0 ]]
+
+# dual monitor: both halves addressed
+: > "$log"
+run 1 eDP-1 switch 3
+grep -q 'focus({ workspace = 3 })' "$log"
+grep -q 'focus({ workspace = 13 })' "$log"
+
+# single monitor: move targets the plain workspace
+: > "$log"
+run 0 eDP-1 move 5
+grep -q 'window.move({ workspace = "5" })' "$log"
+
+# dual monitor, focused on the external: move targets the +10 side
+: > "$log"
+run 1 HDMI-A-1 move 5
+grep -q 'window.move({ workspace = "15" })' "$log"
+
+echo "workspace-pair.check: OK"
